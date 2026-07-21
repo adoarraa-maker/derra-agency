@@ -216,6 +216,54 @@
     .offer li { display: flex; gap: 10px; color: #d6dfe9; font-size: .93rem; }
     .offer li::before { color: var(--blue-light); content: "✓"; font-weight: 700; }
 
+    .pricing { position: relative; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: stretch; gap: 20px; }
+    .price-card {
+      position: relative;
+      display: flex;
+      min-height: 470px;
+      flex-direction: column;
+      padding: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(150deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025));
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .14);
+      transition: transform .3s ease, border-color .3s ease;
+    }
+    .price-card:hover { border-color: rgba(120, 180, 255, .35); transform: translateY(-6px); }
+    .price-card.recommended {
+      border-color: rgba(61, 139, 253, .5);
+      background: linear-gradient(155deg, rgba(61, 139, 253, .17), rgba(255, 255, 255, .035));
+      box-shadow: 0 24px 70px rgba(20, 92, 190, .16);
+    }
+    .recommended-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      color: #06101d;
+      background: var(--blue-light);
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .price-kicker { color: var(--gold); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .price-card h3 { margin-top: 13px; font-size: 1.65rem; }
+    .price {
+      margin: 25px 0 28px;
+      color: #fff;
+      font: 800 clamp(2.3rem, 4vw, 3.2rem) "Manrope", sans-serif;
+      letter-spacing: -.05em;
+      line-height: 1;
+    }
+    .price small { color: var(--muted); font-size: .82rem; font-weight: 500; letter-spacing: 0; }
+    .price-card ul { display: grid; gap: 14px; margin: 0 0 30px; padding: 0; list-style: none; }
+    .price-card li { display: flex; gap: 10px; color: #c9d4e1; font-size: .92rem; }
+    .price-card li::before { flex: 0 0 auto; color: var(--blue-light); content: "✓"; font-weight: 800; }
+    .price-card .btn { width: 100%; margin-top: auto; }
+
     .contact { padding-bottom: 70px; }
     .contact-panel {
       position: relative;
@@ -251,6 +299,8 @@
       .project-card:last-child .project-visual { height: 200px; }
       .project-card:last-child .project-content { min-height: 220px; }
       .offers { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .price-card { min-height: auto; }
     }
 
     @media (max-width: 680px) {
@@ -271,6 +321,7 @@
       .cards { grid-template-columns: 1fr; }
       .project-card:last-child { grid-column: auto; }
       .offer { grid-template-columns: 1fr; gap: 12px; padding: 29px; }
+      .price-card { padding: 29px; }
       .contact-panel { padding: 50px 22px; }
       .footer-inner { align-items: flex-start; flex-direction: column; }
     }
@@ -416,13 +467,67 @@
       </div>
     </section>
 
+    <section class="pricing" id="tarifs">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Tarifs transparents</span>
+            <h2>Choisissez le pack qui vous ressemble.</h2>
+          </div>
+          <p>Des solutions claires pour lancer ou développer votre présence en ligne, sans mauvaise surprise.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="price-card">
+            <span class="price-kicker">L'essentiel</span>
+            <h3>Pack Starter</h3>
+            <div class="price">CHF 490.–</div>
+            <ul>
+              <li>Site vitrine de 1 à 3 pages</li>
+              <li>Bouton de contact WhatsApp</li>
+              <li>Design responsive mobile</li>
+              <li>Carte Google Maps intégrée</li>
+            </ul>
+            <a class="btn btn-secondary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20le%20Pack%20Starter%20%C3%A0%20CHF%20490.-." target="_blank" rel="noopener noreferrer">Choisir Starter</a>
+          </article>
+
+          <article class="price-card recommended">
+            <span class="recommended-badge">Recommandé</span>
+            <span class="price-kicker">Pour vendre en ligne</span>
+            <h3>Pack Business</h3>
+            <div class="price">CHF 890.–</div>
+            <ul>
+              <li>Catalogue ou e-commerce jusqu'à 30 produits</li>
+              <li>Formulaire de réservation ou commande</li>
+              <li>Design premium sur-mesure</li>
+              <li>Parcours client optimisé</li>
+            </ul>
+            <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20le%20Pack%20Business%20%C3%A0%20CHF%20890.-." target="_blank" rel="noopener noreferrer">Choisir Business</a>
+          </article>
+
+          <article class="price-card">
+            <span class="price-kicker">Votre vision, sans limite</span>
+            <h3>Pack Sur-Mesure</h3>
+            <div class="price">Dès CHF 1'490.–</div>
+            <ul>
+              <li>Fonctionnalités avancées sur devis</li>
+              <li>Expérience entièrement personnalisée</li>
+              <li>Maintenance et évolutions</li>
+              <li>Support dédié</li>
+            </ul>
+            <a class="btn btn-secondary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20d'un%20projet%20Sur-Mesure%20%C3%A0%20partir%20de%20CHF%201'490.-." target="_blank" rel="noopener noreferrer">Parler de mon projet</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="contact" id="contact">
       <div class="container">
         <div class="contact-panel">
           <span class="eyebrow">Votre projet commence ici</span>
           <h2>Prêt à donner une nouvelle dimension à votre commerce&nbsp;?</h2>
           <p>Parlez-nous de votre activité. Nous vous répondons directement sur WhatsApp avec des conseils et un devis gratuit, sans engagement.</p>
-          <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20obtenir%20un%20devis%20gratuit%20pour%20mon%20site%20internet." target="_blank" rel="noopener noreferrer">
+          <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20j'ai%20consult%C3%A9%20vos%20tarifs%20et%20je%20souhaite%20obtenir%20un%20devis%20gratuit%20pour%20mon%20site%20internet." target="_blank" rel="noopener noreferrer">
             Demander mon devis gratuit
             <span aria-hidden="true">→</span>
           </a>
