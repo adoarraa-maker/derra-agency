@@ -197,6 +197,47 @@
     .text-link:hover span { transform: translateX(4px); }
     .badge { align-self: flex-start; margin-top: auto; padding: 8px 13px; border: 1px solid rgba(217, 184, 108, .24); border-radius: 999px; color: #e6ca8d; background: rgba(217, 184, 108, .08); font-size: .78rem; font-weight: 700; }
 
+    .testimonials { position: relative; background: rgba(255, 255, 255, .018); border-top: 1px solid var(--line); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .review-card {
+      position: relative;
+      display: flex;
+      min-height: 330px;
+      flex-direction: column;
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025));
+      transition: transform .3s ease, border-color .3s ease;
+    }
+    .review-card:hover { border-color: rgba(217, 184, 108, .34); transform: translateY(-5px); }
+    .review-card::after {
+      position: absolute;
+      top: 20px;
+      right: 27px;
+      color: rgba(120, 180, 255, .11);
+      font: 800 4.6rem/1 Georgia, serif;
+      content: "“";
+    }
+    .stars { position: relative; z-index: 1; color: var(--gold); font-size: 1.04rem; letter-spacing: .16em; }
+    .stars-score { margin-left: 8px; color: #aab7c7; font-size: .72rem; font-weight: 700; letter-spacing: .04em; vertical-align: 2px; }
+    .review-card blockquote { position: relative; z-index: 1; margin: 24px 0 30px; color: #e4ebf3; font-size: 1.08rem; line-height: 1.7; }
+    .reviewer { display: flex; align-items: center; gap: 13px; margin-top: auto; }
+    .reviewer-avatar {
+      display: grid;
+      width: 43px;
+      height: 43px;
+      flex: 0 0 43px;
+      place-items: center;
+      border: 1px solid rgba(217, 184, 108, .26);
+      border-radius: 50%;
+      color: var(--gold);
+      background: rgba(217, 184, 108, .08);
+      font: 800 .78rem "Manrope", sans-serif;
+    }
+    .reviewer strong { display: block; color: #fff; font-size: .9rem; }
+    .reviewer span:last-child { color: var(--muted); font-size: .78rem; }
+
     .services { background: rgba(255, 255, 255, .018); border-block: 1px solid var(--line); }
     .offers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
     .offer {
@@ -402,6 +443,8 @@
       .project-card:last-child { grid-column: 1 / -1; min-height: 420px; }
       .project-card:last-child .project-visual { height: 200px; }
       .project-card:last-child .project-content { min-height: 220px; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .review-card { min-height: auto; }
       .offers { grid-template-columns: 1fr; }
       .pricing-grid { grid-template-columns: 1fr; }
       .price-card { min-height: auto; }
@@ -534,6 +577,47 @@
       </div>
     </section>
 
+    <section class="testimonials" id="avis">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Ils nous font confiance</span>
+            <h2>Avis & Retours Clients</h2>
+          </div>
+          <p>Des expériences simples, efficaces et pensées pour aider chaque activité à gagner en visibilité.</p>
+        </div>
+
+        <div class="testimonials-grid">
+          <article class="review-card">
+            <div class="stars" aria-label="5 étoiles sur 5">★★★★★ <span class="stars-score">5/5</span></div>
+            <blockquote>« Travail très bien fait. Le résultat est élégant, clair et correspond parfaitement à l'image que je voulais donner à mon commerce. »</blockquote>
+            <div class="reviewer">
+              <span class="reviewer-avatar" aria-hidden="true">SB</span>
+              <span><strong>Salon de beauté</strong><span>Commerce local · Meyrin</span></span>
+            </div>
+          </article>
+
+          <article class="review-card">
+            <div class="stars" aria-label="5 étoiles sur 5">★★★★★ <span class="stars-score">5/5</span></div>
+            <blockquote>« Site rapide et fonctionnel, aussi bien sur téléphone que sur ordinateur. Mes clients trouvent désormais toutes les informations facilement. »</blockquote>
+            <div class="reviewer">
+              <span class="reviewer-avatar" aria-hidden="true">AI</span>
+              <span><strong>Artisan indépendant</strong><span>Services de proximité · Genève</span></span>
+            </div>
+          </article>
+
+          <article class="review-card">
+            <div class="stars" aria-label="5 étoiles sur 5">★★★★★ <span class="stars-score">5/5</span></div>
+            <blockquote>« Très satisfaite du suivi, de la rapidité et du professionnalisme. Chaque étape a été expliquée clairement et livrée dans les temps. »</blockquote>
+            <div class="reviewer">
+              <span class="reviewer-avatar" aria-hidden="true">BT</span>
+              <span><strong>Boutique textile</strong><span>Commerce spécialisé · Genève</span></span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="services" id="services">
       <div class="container">
         <div class="section-heading">
@@ -637,7 +721,7 @@
         <div class="section-heading">
           <div>
             <span class="eyebrow">Contact instantané</span>
-            <h2>Un échange, en un geste.</h2>
+            <h2>QR Code & Prise de rendez-vous</h2>
           </div>
           <p>Scannez, cliquez et échangeons rapidement autour de votre projet digital.</p>
         </div>
