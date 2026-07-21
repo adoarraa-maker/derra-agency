@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Derra Digital Studio crée des sites internet modernes, rapides et clés en main pour les commerces.">
+  <meta name="theme-color" content="#07111f">
+  <title>Derra Digital Studio — Sites web modernes pour commerces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07111f;
+      --ink-soft: #0d1b2d;
+      --blue: #3d8bfd;
+      --blue-light: #78b4ff;
+      --gold: #d9b86c;
+      --white: #f8fbff;
+      --muted: #9aa9bc;
+      --line: rgba(255, 255, 255, .1);
+      --card: rgba(255, 255, 255, .055);
+      --radius: 24px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .3);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 80% 5%, rgba(61, 139, 253, .16), transparent 26rem),
+        radial-gradient(circle at 10% 38%, rgba(217, 184, 108, .08), transparent 22rem),
+        var(--ink);
+      font-family: "DM Sans", sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    .container { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
+
+    .site-header {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 10;
+      padding: 26px 0;
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+    .brand { display: flex; align-items: center; gap: 12px; font: 800 1rem "Manrope", sans-serif; letter-spacing: -.02em; }
+    .brand-mark {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 1px solid rgba(217, 184, 108, .4);
+      border-radius: 12px;
+      color: var(--gold);
+      background: linear-gradient(145deg, rgba(217, 184, 108, .15), rgba(61, 139, 253, .08));
+      font: 800 1rem "Manrope", sans-serif;
+    }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: #c7d1de; font-size: .91rem; }
+    .nav-links a { transition: color .2s ease; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta { padding: 10px 17px; border: 1px solid var(--line); border-radius: 999px; }
+
+    .hero {
+      position: relative;
+      display: grid;
+      min-height: 820px;
+      place-items: center;
+      padding: 155px 0 90px;
+      isolation: isolate;
+    }
+    .hero::after {
+      position: absolute;
+      z-index: -1;
+      right: -120px;
+      top: 140px;
+      width: 440px;
+      height: 440px;
+      border: 1px solid rgba(120, 180, 255, .16);
+      border-radius: 50%;
+      box-shadow: 0 0 0 80px rgba(61, 139, 253, .025), 0 0 0 160px rgba(61, 139, 253, .018);
+      content: "";
+    }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(330px, .75fr); align-items: center; gap: 80px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 28px; height: 1px; background: currentColor; content: ""; }
+    h1, h2, h3 { margin: 0; font-family: "Manrope", sans-serif; line-height: 1.12; letter-spacing: -.04em; }
+    h1 { max-width: 760px; font-size: clamp(3.1rem, 6vw, 5.75rem); }
+    .gradient-text { color: transparent; background: linear-gradient(105deg, #fff 15%, var(--blue-light) 60%, var(--gold)); background-clip: text; -webkit-background-clip: text; }
+    .hero-copy > p { max-width: 650px; margin: 28px 0 36px; color: #b1bece; font-size: clamp(1.05rem, 2vw, 1.22rem); }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+    .btn {
+      display: inline-flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 23px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { color: #07111f; background: #fff; box-shadow: 0 12px 35px rgba(255, 255, 255, .1); }
+    .btn-primary svg { color: #1db954; }
+    .btn-secondary { border: 1px solid var(--line); color: #d7e0eb; background: rgba(255, 255, 255, .03); }
+    .btn-secondary:hover { border-color: rgba(255, 255, 255, .24); }
+
+    .hero-card {
+      position: relative;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .025));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      transform: rotate(2deg);
+    }
+    .browser { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: #0a1727; }
+    .browser-bar { display: flex; align-items: center; gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    .browser-bar i { width: 7px; height: 7px; border-radius: 50%; background: #526176; }
+    .browser-bar span { width: 54%; height: 7px; margin-left: 8px; border-radius: 10px; background: rgba(255, 255, 255, .07); }
+    .mock-body { padding: 30px 24px 24px; }
+    .mock-label { width: 72px; height: 7px; border-radius: 10px; background: var(--gold); }
+    .mock-title { width: 86%; height: 20px; margin-top: 16px; border-radius: 5px; background: #f5f8fb; box-shadow: 0 29px 0 rgba(245, 248, 251, .9); }
+    .mock-lines { width: 62%; height: 6px; margin-top: 52px; border-radius: 5px; background: #59697d; box-shadow: 0 14px 0 #46566a; }
+    .mock-btn { width: 106px; height: 34px; margin-top: 30px; border-radius: 20px; background: var(--blue); }
+    .mock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 32px; }
+    .mock-grid i { height: 78px; border-radius: 9px; background: linear-gradient(140deg, #243a55, #122236); }
+    .float-note {
+      position: absolute;
+      right: -34px;
+      bottom: 36px;
+      padding: 14px 17px;
+      border: 1px solid rgba(255, 255, 255, .13);
+      border-radius: 16px;
+      color: #dfe8f2;
+      background: #102237;
+      box-shadow: var(--shadow);
+      font-size: .82rem;
+      font-weight: 600;
+      transform: rotate(-2deg);
+    }
+    .float-note b { display: block; color: var(--blue-light); font-size: 1.1rem; }
+
+    section { padding: 110px 0; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 46px; }
+    .section-heading h2 { max-width: 660px; font-size: clamp(2.25rem, 4vw, 3.7rem); }
+    .section-heading > p { max-width: 380px; margin: 0; color: var(--muted); }
+
+    .portfolio { border-top: 1px solid var(--line); }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .project-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 480px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      transition: transform .3s ease, border-color .3s ease;
+    }
+    .project-card:hover { border-color: rgba(120, 180, 255, .35); transform: translateY(-6px); }
+    .project-visual { position: relative; height: 225px; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .project-visual::before, .project-visual::after { position: absolute; content: ""; }
+    .beauty { background: linear-gradient(140deg, #4a3443, #171827); }
+    .beauty::before { inset: 35px 55px; border: 1px solid rgba(244, 194, 194, .45); border-radius: 50% 50% 12px 12px; }
+    .beauty::after { inset: 55px 74px 25px; border-radius: 50% 50% 8px 8px; background: linear-gradient(150deg, #c98982, #6d424d); box-shadow: 35px -9px 0 rgba(255, 255, 255, .06); }
+    .textile { background: linear-gradient(140deg, #19394c, #101c2d); }
+    .textile::before { width: 170px; height: 170px; right: 30px; top: 25px; border-radius: 50%; background: repeating-radial-gradient(circle at 30%, #d9b86c 0 4px, #527590 5px 15px); opacity: .6; }
+    .textile::after { width: 130px; height: 160px; left: 25px; top: 45px; border-radius: 10px; background: repeating-linear-gradient(115deg, #8eb8c6 0 7px, #25536a 8px 16px); transform: rotate(-8deg); }
+    .restaurant { background: linear-gradient(140deg, #322c25, #141923); }
+    .restaurant::before { width: 160px; height: 160px; left: 50%; top: 33px; border: 2px solid rgba(217, 184, 108, .35); border-radius: 50%; transform: translateX(-50%); box-shadow: inset 0 0 0 32px rgba(217, 184, 108, .04); }
+    .restaurant::after { width: 60px; height: 60px; left: 50%; top: 85px; border-radius: 50%; background: radial-gradient(circle at 40% 30%, #d9b86c, #604c2b); transform: translateX(-50%); }
+    .project-content { display: flex; min-height: 255px; flex-direction: column; padding: 28px; }
+    .category { margin-bottom: 13px; color: var(--gold); font-size: .73rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .project-card h3 { font-size: 1.55rem; }
+    .project-card p { margin: 13px 0 25px; color: var(--muted); }
+    .text-link { display: inline-flex; align-items: center; gap: 9px; margin-top: auto; color: #fff; font-weight: 700; }
+    .text-link span { color: var(--blue-light); transition: transform .2s ease; }
+    .text-link:hover span { transform: translateX(4px); }
+    .badge { align-self: flex-start; margin-top: auto; padding: 8px 13px; border: 1px solid rgba(217, 184, 108, .24); border-radius: 999px; color: #e6ca8d; background: rgba(217, 184, 108, .08); font-size: .78rem; font-weight: 700; }
+
+    .services { background: rgba(255, 255, 255, .018); border-block: 1px solid var(--line); }
+    .offers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .offer {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      padding: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .065), rgba(255, 255, 255, .025));
+    }
+    .offer.featured { border-color: rgba(61, 139, 253, .32); background: linear-gradient(145deg, rgba(61, 139, 253, .12), rgba(255, 255, 255, .025)); }
+    .offer-number { color: var(--gold); font: 700 .8rem "Manrope", sans-serif; }
+    .offer h3 { font-size: 1.7rem; }
+    .offer p { margin: 12px 0 24px; color: var(--muted); }
+    .offer ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .offer li { display: flex; gap: 10px; color: #d6dfe9; font-size: .93rem; }
+    .offer li::before { color: var(--blue-light); content: "✓"; font-weight: 700; }
+
+    .contact { padding-bottom: 70px; }
+    .contact-panel {
+      position: relative;
+      overflow: hidden;
+      padding: 70px;
+      border: 1px solid rgba(120, 180, 255, .22);
+      border-radius: 32px;
+      background: linear-gradient(120deg, rgba(61, 139, 253, .13), rgba(217, 184, 108, .06));
+      text-align: center;
+    }
+    .contact-panel::before { position: absolute; width: 380px; height: 380px; right: -180px; top: -220px; border-radius: 50%; background: rgba(61, 139, 253, .15); filter: blur(20px); content: ""; }
+    .contact-panel h2 { max-width: 760px; margin: auto; font-size: clamp(2.2rem, 4vw, 3.8rem); }
+    .contact-panel p { max-width: 590px; margin: 22px auto 32px; color: #afbdcd; font-size: 1.05rem; }
+    footer { padding: 25px 0 34px; color: #7f8da0; font-size: .85rem; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 25px; border-top: 1px solid var(--line); }
+    .footer-inner a:hover { color: #fff; }
+
+    .reveal { animation: reveal .7s ease both; }
+    .delay-1 { animation-delay: .12s; }
+    .delay-2 { animation-delay: .24s; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 940px) {
+      .hero { min-height: auto; padding-top: 175px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 65px; }
+      .hero-copy { text-align: center; }
+      .hero-copy .eyebrow { justify-content: center; }
+      .hero-copy > p { margin-inline: auto; }
+      .actions { justify-content: center; }
+      .hero-card { width: min(520px, 90%); margin: auto; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .project-card:last-child { grid-column: 1 / -1; min-height: 420px; }
+      .project-card:last-child .project-visual { height: 200px; }
+      .project-card:last-child .project-content { min-height: 220px; }
+      .offers { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .container { width: min(100% - 28px, 1160px); }
+      .site-header { padding-top: 19px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .nav-cta { padding: 8px 13px; font-size: .8rem; }
+      .brand span:last-child { max-width: 100px; line-height: 1.1; }
+      .hero { padding: 140px 0 75px; }
+      h1 { font-size: clamp(2.7rem, 13vw, 4rem); }
+      .hero-copy > p { font-size: 1rem; }
+      .actions { align-items: stretch; flex-direction: column; }
+      .btn { width: 100%; }
+      .hero-card { width: 94%; padding: 15px; border-radius: 22px; transform: none; }
+      .float-note { right: -10px; bottom: 25px; }
+      section { padding: 78px 0; }
+      .section-heading { align-items: flex-start; flex-direction: column; gap: 18px; margin-bottom: 32px; }
+      .cards { grid-template-columns: 1fr; }
+      .project-card:last-child { grid-column: auto; }
+      .offer { grid-template-columns: 1fr; gap: 12px; padding: 29px; }
+      .contact-panel { padding: 50px 22px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Navigation principale">
+      <a class="brand" href="#accueil" aria-label="Derra Digital Studio, accueil">
+        <span class="brand-mark">D.</span>
+        <span>Derra Digital Studio</span>
+      </a>
+      <div class="nav-links">
+        <a href="#realisations">Démonstrations</a>
+        <a href="#services">Services</a>
+        <a class="nav-cta" href="#contact">Parlons de votre projet</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="accueil">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow reveal">Création web sur-mesure</span>
+          <h1 class="reveal delay-1">Des sites internet <span class="gradient-text">modernes & clés en main</span> pour vos commerces</h1>
+          <p class="reveal delay-2">Développez votre visibilité locale avec un site rapide, élégant et optimisé pour WhatsApp et Google Maps.</p>
+          <div class="actions reveal delay-2">
+            <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20de%20mon%20projet%20web." target="_blank" rel="noopener noreferrer">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.84 9.84 0 0 0-8.49 14.8L2 22l5.34-1.52A9.93 9.93 0 1 0 12.04 2Zm0 17.98a8.03 8.03 0 0 1-4.09-1.12l-.29-.17-3.17.9.91-3.08-.19-.3a7.93 7.93 0 1 1 6.83 3.77Zm4.4-5.94c-.24-.12-1.43-.7-1.65-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.02-.37-1.94-1.19a7.2 7.2 0 0 1-1.34-1.66c-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.43-.59 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28Z"/></svg>
+              Discuter sur WhatsApp
+            </a>
+            <a class="btn btn-secondary" href="#realisations">Découvrir nos démos ↓</a>
+          </div>
+        </div>
+
+        <div class="hero-card reveal delay-2" aria-hidden="true">
+          <div class="browser">
+            <div class="browser-bar"><i></i><i></i><i></i><span></span></div>
+            <div class="mock-body">
+              <div class="mock-label"></div>
+              <div class="mock-title"></div>
+              <div class="mock-lines"></div>
+              <div class="mock-btn"></div>
+              <div class="mock-grid"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="float-note"><b>100%</b> adapté au mobile</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="portfolio" id="realisations">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Nos démonstrations</span>
+            <h2>Imaginez votre commerce, déjà en ligne.</h2>
+          </div>
+          <p>Explorez nos modèles pensés pour convertir vos visiteurs en clients, sur tous les écrans.</p>
+        </div>
+
+        <div class="cards">
+          <article class="project-card">
+            <div class="project-visual beauty" role="img" aria-label="Aperçu graphique du site Éclat & Coiffure"></div>
+            <div class="project-content">
+              <span class="category">Salon de coiffure & beauté</span>
+              <h3>Éclat & Coiffure</h3>
+              <p>Prise de RDV WhatsApp, tarifs, galerie avec zoom.</p>
+              <a class="text-link" href="https://adoarraa-maker.github.io/site-coiffure/" target="_blank" rel="noopener noreferrer">Voir la démo <span>→</span></a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-visual textile" role="img" aria-label="Aperçu graphique du site Marteder Textile"></div>
+            <div class="project-content">
+              <span class="category">Textile & boutique</span>
+              <h3>Marteder Textile</h3>
+              <p>Catalogue de produits, mise en valeur des tissus et contact direct.</p>
+              <a class="text-link" href="https://adoarraa-maker.github.io/marteder-textile/" target="_blank" rel="noopener noreferrer">Voir la démo <span>→</span></a>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-visual restaurant" role="img" aria-label="Aperçu graphique d'un futur site de restauration"></div>
+            <div class="project-content">
+              <span class="category">Restaurant & café</span>
+              <h3>Gastronomie & Restauration</h3>
+              <p>Menu digital, réservation de table et géolocalisation.</p>
+              <span class="badge">Modèle à venir</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Nos services & forfaits</span>
+            <h2>Une formule adaptée à votre ambition.</h2>
+          </div>
+          <p>De l'essentiel à une présence digitale complète, chaque site est conçu avec soin et livré clé en main.</p>
+        </div>
+
+        <div class="offers">
+          <article class="offer">
+            <span class="offer-number">01</span>
+            <div>
+              <h3>Vitrine Express</h3>
+              <p>L'essentiel pour lancer rapidement votre présence en ligne.</p>
+              <ul>
+                <li>Site professionnel d'une page</li>
+                <li>Design responsive mobile & ordinateur</li>
+                <li>Bouton de contact WhatsApp</li>
+                <li>Géolocalisation Google Maps</li>
+                <li>Mise en ligne rapide</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="offer featured">
+            <span class="offer-number">02</span>
+            <div>
+              <h3>Business</h3>
+              <p>Une expérience complète pour présenter et développer votre activité.</p>
+              <ul>
+                <li>Site complet, plusieurs pages ou sections</li>
+                <li>Catalogue de produits ou services</li>
+                <li>Design et fonctionnalités sur-mesure</li>
+                <li>Optimisation de votre parcours client</li>
+                <li>Accompagnement personnalisé</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="contact-panel">
+          <span class="eyebrow">Votre projet commence ici</span>
+          <h2>Prêt à donner une nouvelle dimension à votre commerce&nbsp;?</h2>
+          <p>Parlez-nous de votre activité. Nous vous répondons directement sur WhatsApp avec des conseils et un devis gratuit, sans engagement.</p>
+          <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20obtenir%20un%20devis%20gratuit%20pour%20mon%20site%20internet." target="_blank" rel="noopener noreferrer">
+            Demander mon devis gratuit
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <a class="brand" href="#accueil"><span class="brand-mark">D.</span><span>Derra Digital Studio</span></a>
+      <span>© 2026 Derra Digital Studio. Tous droits réservés.</span>
+    </div>
+  </footer>
+</body>
+</html>
