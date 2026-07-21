@@ -276,7 +276,51 @@
     }
     .contact-panel::before { position: absolute; width: 380px; height: 380px; right: -180px; top: -220px; border-radius: 50%; background: rgba(61, 139, 253, .15); filter: blur(20px); content: ""; }
     .contact-panel h2 { max-width: 760px; margin: auto; font-size: clamp(2.2rem, 4vw, 3.8rem); }
-    .contact-panel p { max-width: 590px; margin: 22px auto 32px; color: #afbdcd; font-size: 1.05rem; }
+    .contact-intro > p { max-width: 590px; margin: 22px auto 42px; color: #afbdcd; font-size: 1.05rem; }
+    .contact-layout { position: relative; z-index: 1; display: grid; grid-template-columns: .88fr 1.12fr; gap: 22px; text-align: left; }
+    .contact-details { display: flex; flex-direction: column; gap: 14px; }
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(5, 15, 27, .42);
+      transition: border-color .2s ease, background .2s ease;
+    }
+    a.contact-item:hover { border-color: rgba(120, 180, 255, .38); background: rgba(14, 35, 57, .7); }
+    .contact-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--blue-light);
+      background: rgba(61, 139, 253, .12);
+    }
+    .contact-label { display: block; margin-bottom: 3px; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .contact-value { display: block; color: #f2f6fb; font-size: .97rem; font-style: normal; line-height: 1.45; }
+    .contact-actions { display: grid; gap: 10px; margin-top: auto; padding-top: 8px; }
+    .contact-actions .btn { width: 100%; }
+    .map-wrap { position: relative; overflow: hidden; min-height: 415px; border: 1px solid var(--line); border-radius: 20px; background: #132235; }
+    .map-wrap iframe { display: block; width: 100%; height: 100%; min-height: 415px; border: 0; filter: saturate(.82) contrast(1.04); }
+    .map-link {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: #081320;
+      background: #fff;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, .24);
+      font-size: .8rem;
+      font-weight: 800;
+    }
     footer { padding: 25px 0 34px; color: #7f8da0; font-size: .85rem; }
     .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 25px; border-top: 1px solid var(--line); }
     .footer-inner a:hover { color: #fff; }
@@ -301,6 +345,7 @@
       .offers { grid-template-columns: 1fr; }
       .pricing-grid { grid-template-columns: 1fr; }
       .price-card { min-height: auto; }
+      .contact-layout { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 680px) {
@@ -323,6 +368,8 @@
       .offer { grid-template-columns: 1fr; gap: 12px; padding: 29px; }
       .price-card { padding: 29px; }
       .contact-panel { padding: 50px 22px; }
+      .contact-item { padding: 16px; }
+      .map-wrap, .map-wrap iframe { min-height: 340px; }
       .footer-inner { align-items: flex-start; flex-direction: column; }
     }
 
@@ -355,7 +402,7 @@
           <h1 class="reveal delay-1">Des sites internet <span class="gradient-text">modernes & clés en main</span> pour vos commerces</h1>
           <p class="reveal delay-2">Développez votre visibilité locale avec un site rapide, élégant et optimisé pour WhatsApp et Google Maps.</p>
           <div class="actions reveal delay-2">
-            <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20de%20mon%20projet%20web." target="_blank" rel="noopener noreferrer">
+            <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20de%20mon%20projet%20web." target="_blank" rel="noopener noreferrer">
               <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.84 9.84 0 0 0-8.49 14.8L2 22l5.34-1.52A9.93 9.93 0 1 0 12.04 2Zm0 17.98a8.03 8.03 0 0 1-4.09-1.12l-.29-.17-3.17.9.91-3.08-.19-.3a7.93 7.93 0 1 1 6.83 3.77Zm4.4-5.94c-.24-.12-1.43-.7-1.65-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.02-.37-1.94-1.19a7.2 7.2 0 0 1-1.34-1.66c-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.47-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.43-.59 1.63-1.15.2-.57.2-1.05.14-1.15-.06-.1-.22-.16-.46-.28Z"/></svg>
               Discuter sur WhatsApp
             </a>
@@ -488,7 +535,7 @@
               <li>Design responsive mobile</li>
               <li>Carte Google Maps intégrée</li>
             </ul>
-            <a class="btn btn-secondary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20le%20Pack%20Starter%20%C3%A0%20CHF%20490.-." target="_blank" rel="noopener noreferrer">Choisir Starter</a>
+            <a class="btn btn-secondary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20le%20Pack%20Starter%20%C3%A0%20CHF%20490.-." target="_blank" rel="noopener noreferrer">Choisir Starter</a>
           </article>
 
           <article class="price-card recommended">
@@ -502,7 +549,7 @@
               <li>Design premium sur-mesure</li>
               <li>Parcours client optimisé</li>
             </ul>
-            <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20le%20Pack%20Business%20%C3%A0%20CHF%20890.-." target="_blank" rel="noopener noreferrer">Choisir Business</a>
+            <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20le%20Pack%20Business%20%C3%A0%20CHF%20890.-." target="_blank" rel="noopener noreferrer">Choisir Business</a>
           </article>
 
           <article class="price-card">
@@ -515,7 +562,7 @@
               <li>Maintenance et évolutions</li>
               <li>Support dédié</li>
             </ul>
-            <a class="btn btn-secondary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20d'un%20projet%20Sur-Mesure%20%C3%A0%20partir%20de%20CHF%201'490.-." target="_blank" rel="noopener noreferrer">Parler de mon projet</a>
+            <a class="btn btn-secondary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20d%27un%20projet%20Sur-Mesure%20%C3%A0%20partir%20de%20CHF%201%27490.-." target="_blank" rel="noopener noreferrer">Parler de mon projet</a>
           </article>
         </div>
       </div>
@@ -524,13 +571,55 @@
     <section class="contact" id="contact">
       <div class="container">
         <div class="contact-panel">
-          <span class="eyebrow">Votre projet commence ici</span>
-          <h2>Prêt à donner une nouvelle dimension à votre commerce&nbsp;?</h2>
-          <p>Parlez-nous de votre activité. Nous vous répondons directement sur WhatsApp avec des conseils et un devis gratuit, sans engagement.</p>
-          <a class="btn btn-primary" href="https://api.whatsapp.com/send?text=Bonjour%20Derra%20Digital%20Studio%2C%20j'ai%20consult%C3%A9%20vos%20tarifs%20et%20je%20souhaite%20obtenir%20un%20devis%20gratuit%20pour%20mon%20site%20internet." target="_blank" rel="noopener noreferrer">
-            Demander mon devis gratuit
-            <span aria-hidden="true">→</span>
-          </a>
+          <div class="contact-intro">
+            <span class="eyebrow">Votre projet commence ici</span>
+            <h2>Prêt à donner une nouvelle dimension à votre commerce&nbsp;?</h2>
+            <p>Parlez-nous de votre activité. Nous vous répondons directement sur WhatsApp avec des conseils et un devis gratuit, sans engagement.</p>
+          </div>
+
+          <div class="contact-layout">
+            <div class="contact-details">
+              <a class="contact-item" href="tel:+41765761672" aria-label="Appeler Derra Digital Studio au +41 76 576 16 72">
+                <span class="contact-icon" aria-hidden="true">
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.8a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.33 1.84.56 2.8.69A2 2 0 0 1 22 16.92Z"/></svg>
+                </span>
+                <span>
+                  <span class="contact-label">Téléphone & WhatsApp</span>
+                  <strong class="contact-value">+41 76 576 16 72</strong>
+                </span>
+              </a>
+
+              <div class="contact-item">
+                <span class="contact-icon" aria-hidden="true">
+                  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                </span>
+                <span>
+                  <span class="contact-label">Adresse</span>
+                  <address class="contact-value">Derra Aboudou<br>Rue de la Golette 15G, 1217 Meyrin<br>Genève, Suisse</address>
+                </span>
+              </div>
+
+              <div class="contact-actions">
+                <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20j%27ai%20consult%C3%A9%20vos%20tarifs%20et%20je%20souhaite%20obtenir%20un%20devis%20gratuit%20pour%20mon%20site%20internet." target="_blank" rel="noopener noreferrer">
+                  Demander mon devis gratuit
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="map-wrap">
+              <iframe
+                title="Localisation de Derra Digital Studio à Meyrin"
+                src="https://www.google.com/maps?q=Rue%20de%20la%20Golette%2015G%2C%201217%20Meyrin%2C%20Gen%C3%A8ve%2C%20Suisse&amp;output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+              </iframe>
+              <a class="map-link" href="https://www.google.com/maps/dir/?api=1&amp;destination=Rue%20de%20la%20Golette%2015G%2C%201217%20Meyrin%2C%20Gen%C3%A8ve%2C%20Suisse" target="_blank" rel="noopener noreferrer">
+                Obtenir l'itinéraire <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
