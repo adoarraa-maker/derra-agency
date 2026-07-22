@@ -179,7 +179,8 @@
     return window.DerraLogoGenerator.generateLogoSet(
       config.businessName || "Mon Commerce",
       colors.primary,
-      colors.soft
+      colors.soft,
+      config.template || null
     );
   }
 
@@ -196,7 +197,7 @@
         return `
           <button type="button" class="logo-option ${selected}" data-logo-style="${option.id}" role="option" aria-selected="${selected ? "true" : "false"}">
             <img src="${option.dataUrl}" alt="Logo ${option.label}">
-            <span>${option.label}</span>
+            <span>${option.label}${option.icon ? " · " + option.icon : ""}</span>
           </button>`;
       })
       .join("");
@@ -638,6 +639,9 @@
       if (!state.config.tagline) state.config.tagline = tpl.defaultTagline;
       save(state);
       renderTemplates(state);
+      if (state.config.logoUpsell) {
+        applyGeneratedLogo(state.config.logoStyle || "clean-tech");
+      }
       return;
     }
 
@@ -645,7 +649,7 @@
       updateConfig({ theme: target.dataset.theme });
       const next = load();
       if (next.config.logoUpsell) {
-        const style = next.config.logoStyle || "monogram";
+        const style = next.config.logoStyle || "clean-tech";
         applyGeneratedLogo(style);
       } else {
         render();
@@ -756,7 +760,7 @@
       }
       updateConfig({ logoUpsell: true });
       renderLogoPicker(load());
-      await applyGeneratedLogo(load().config.logoStyle || "monogram");
+      await applyGeneratedLogo(load().config.logoStyle || "clean-tech");
       updateCheckoutPriceUI(load().config);
     }
   });
@@ -775,7 +779,7 @@
         });
       } else {
         updateConfig({ logoUpsell: true });
-        await applyGeneratedLogo(load().config.logoStyle || "monogram");
+        await applyGeneratedLogo(load().config.logoStyle || "clean-tech");
       }
       const state = load();
       renderSummary(state);

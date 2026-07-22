@@ -245,13 +245,13 @@ h1 { font-size: clamp(2rem, 4vw, 3.2rem); max-width: 760px; }
 .logo-generator[hidden] { display: none !important; }
 .logo-picker {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 .logo-option {
   display: grid;
   gap: 8px;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
   color: inherit;
@@ -265,16 +265,16 @@ h1 { font-size: clamp(2rem, 4vw, 3.2rem); max-width: 760px; }
   border-color: rgba(217, 184, 108, .55);
   box-shadow: 0 0 0 1px rgba(217, 184, 108, .25);
 }
-.logo-option img,
-.logo-option svg {
+.logo-option img {
   width: 100%;
   height: auto;
-  border-radius: 10px;
-  background: #0a1524;
+  border-radius: 12px;
+  background: #07111f;
+  border: 1px solid rgba(255,255,255,.06);
 }
 .logo-option span {
   color: #d7e0eb;
-  font-size: .78rem;
+  font-size: .8rem;
   font-weight: 700;
 }
 
