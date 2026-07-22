@@ -13,7 +13,8 @@
   } = window.DerraBuilder;
 
   const PUBLISH_PRICE = 99;
-  const PUBLISH_LABEL = "Publier mon site web maintenant — 99 CHF";
+  const PUBLISH_LABEL = "Publier mon site maintenant — 99 CHF";
+  const EDITABLE_STEPS = ["template", "details", "preview"];
 
   const ROUTES = ["template", "details", "preview", "checkout", "success"];
   const STEP_LABELS = {
@@ -32,6 +33,7 @@
     servicesList: document.getElementById("services-list"),
     themeGrid: document.getElementById("theme-grid"),
     previewMounts: [...document.querySelectorAll("[data-preview-mount]")],
+    previewCtaBar: document.getElementById("preview-cta-bar"),
     summary: document.getElementById("checkout-summary"),
     overlay: document.getElementById("payment-overlay"),
     overlayText: document.getElementById("payment-overlay-text"),
@@ -54,24 +56,48 @@
       location.hash = "#/template";
       return;
     }
+    if ((step === "preview" || step === "checkout") && !state.config.businessName) {
+      const error = validateDetails(state.config);
+      if (error) {
+        location.hash = "#/details";
+        return;
+      }
+    }
     setStep(step);
     location.hash = "#/" + step;
     render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function canJumpTo(target, state, current) {
+    if (state.locked) return target === "success";
+    if (target === "checkout" || target === "success") return false;
+    if (!EDITABLE_STEPS.includes(target)) return false;
+    if (target === "template") return true;
+    if (!state.config.template) return false;
+    if (target === "details") return true;
+    if (target === "preview") return !validateDetails(state.config);
+    return ROUTES.indexOf(target) <= ROUTES.indexOf(current);
   }
 
   function renderSteps(current) {
+    const state = load();
     const order = ROUTES;
     els.steps.innerHTML = order
       .map((id, index) => {
         const currentIndex = order.indexOf(current);
+        const jumpable = canJumpTo(id, state, current);
         const cls = [
           "step-pill",
           id === current ? "active" : "",
-          index < currentIndex ? "done" : ""
+          index < currentIndex ? "done" : "",
+          jumpable ? "clickable" : "",
+          !jumpable && id !== current ? "locked" : ""
         ]
           .filter(Boolean)
           .join(" ");
-        return `<div class="${cls}"><span>${index + 1}</span>${STEP_LABELS[id]}</div>`;
+        const attrs = jumpable ? `data-step="${id}" role="button" tabindex="0"` : `aria-disabled="true"`;
+        return `<button type="button" class="${cls}" ${attrs}><span>${index + 1}</span>${STEP_LABELS[id]}</button>`;
       })
       .join("");
   }
@@ -106,7 +132,7 @@
   function renderServices(state) {
     els.servicesList.innerHTML = state.config.services
       .map(
-        (service, index) => `
+        (service) => `
       <div class="service-row" data-service-id="${service.id}">
         <div class="field">
           <label>Service / produit</label>
@@ -143,58 +169,150 @@
     });
   }
 
+  function digitsOnly(value) {
+    return String(value || "").replace(/\D/g, "");
+  }
+
+  function phoneHref(phone) {
+    const digits = digitsOnly(phone);
+    return digits ? "tel:+" + digits.replace(/^00/, "") : "#";
+  }
+
+  function whatsappHref(whatsapp, businessName) {
+    const digits = digitsOnly(whatsapp);
+    if (!digits) return "#";
+    const text = encodeURIComponent(
+      "Bonjour " + (businessName || "") + ", je souhaite obtenir des informations."
+    );
+    return "https://wa.me/" + digits.replace(/^00/, "") + "?text=" + text;
+  }
+
   function previewHTML(state) {
     const c = state.config;
     const theme = THEMES[c.theme] || THEMES.midnight;
     const tpl = TEMPLATES[c.template];
-    const bannerStyle = c.banner
-      ? `url("${c.banner}")`
-      : `linear-gradient(135deg, ${theme.soft}, ${theme.bg})`;
-    const services = (c.services || []).filter((s) => s.name || s.price);
+    const name = c.businessName || "Nom de votre commerce";
+    const tagline = c.tagline || (tpl ? tpl.defaultTagline : "Votre accroche");
+    const services = (c.services || []).filter((s) => s.name || s.price || s.image);
+    const galleryImages = [
+      c.banner,
+      c.logo,
+      ...services.map((s) => s.image)
+    ].filter(Boolean);
+    const uniqueGallery = [...new Set(galleryImages)].slice(0, 6);
+    const heroBg = c.banner
+      ? `linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.78)), url('${c.banner}')`
+      : `linear-gradient(135deg, ${theme.soft}, ${theme.bg} 55%, ${tpl ? tpl.accent : theme.primary})`;
+    const callLink = phoneHref(c.phone);
+    const waLink = whatsappHref(c.whatsapp || c.phone, name);
+    const initial = (name.trim()[0] || "D").toUpperCase();
+
+    const galleryBlock =
+      uniqueGallery.length > 0
+        ? `<div class="ps-gallery">${uniqueGallery
+            .map(
+              (src) =>
+                `<figure><img src="${src}" alt="Galerie ${escapeAttr(name)}"></figure>`
+            )
+            .join("")}</div>`
+        : `<p class="preview-empty">Ajoutez un logo, une bannière ou des images de services pour constituer la galerie.</p>`;
+
+    const servicesBlock =
+      services.length > 0
+        ? `<div class="ps-cards">${services
+            .map((s) => {
+              const media = s.image
+                ? `style="background-image:url('${s.image}')"`
+                : `style="background:linear-gradient(145deg, ${theme.soft}, ${theme.bg})"`;
+              return `
+              <article class="ps-card">
+                <div class="ps-card-media" ${media}></div>
+                <div class="ps-card-body">
+                  <strong>${escapeHtml(s.name || "Service")}</strong>
+                  <div class="ps-price">${escapeHtml(s.price || "Sur devis")}</div>
+                </div>
+              </article>`;
+            })
+            .join("")}</div>`
+        : `<p class="preview-empty">Ajoutez vos services ou produits avec leurs prix pour les afficher ici.</p>`;
 
     return `
-      <div class="preview-site" style="--preview-bg:${theme.bg};--preview-text:${theme.text};--preview-soft:${theme.soft};--preview-primary:${theme.primary};--preview-banner:${bannerStyle}">
-        <div class="phero" style="background-image:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.75)), ${c.banner ? `url('${c.banner}')` : `linear-gradient(135deg,${theme.soft},${theme.bg})`}">
-          ${c.logo ? `<img class="logo" src="${c.logo}" alt="Logo">` : ""}
-          <div>
-            <div style="color:${theme.primary};font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">${tpl ? tpl.label : "Votre site"}</div>
-            <h2>${escapeHtml(c.businessName || "Nom de votre commerce")}</h2>
-            <p>${escapeHtml(c.tagline || (tpl ? tpl.defaultTagline : "Votre accroche"))}</p>
-          </div>
-        </div>
-        <div class="preview-body">
-          <div class="preview-meta">
-            <div><strong>Tél.</strong> ${escapeHtml(c.phone || "—")}</div>
-            <div><strong>WhatsApp</strong> ${escapeHtml(c.whatsapp || "—")}</div>
-            <div><strong>Adresse</strong> ${escapeHtml(c.address || "—")}</div>
-            <div><strong>Horaires</strong> ${escapeHtml(c.hours || "—")}</div>
-          </div>
-          <h3 style="margin-bottom:12px;font-size:1.15rem">Services & produits</h3>
-          <div class="preview-services">
+      <div class="preview-site" style="--preview-bg:${theme.bg};--preview-text:${theme.text};--preview-soft:${theme.soft};--preview-primary:${theme.primary}">
+        <header class="ps-header">
+          <div class="ps-brand">
             ${
-              services.length
-                ? services
-                    .map(
-                      (s) => `
-              <div class="preview-service">
-                ${s.image ? `<img src="${s.image}" alt="">` : `<div style="width:64px;height:64px;border-radius:10px;background:rgba(255,255,255,.08)"></div>`}
-                <div><strong>${escapeHtml(s.name || "Service")}</strong></div>
-                <span>${escapeHtml(s.price || "—")}</span>
-              </div>`
-                    )
-                    .join("")
-                : `<p class="preview-empty">Ajoutez des services pour les voir apparaître ici.</p>`
+              c.logo
+                ? `<img src="${c.logo}" alt="Logo ${escapeAttr(name)}">`
+                : `<span class="ps-brand-mark">${initial}</span>`
             }
+            <span>${escapeHtml(name)}</span>
           </div>
-        </div>
+          <nav class="ps-nav" aria-label="Navigation du site preview">
+            <a href="#preview-services">Services</a>
+            <a href="#preview-gallery">Galerie</a>
+            <a href="#preview-contact">Contact</a>
+          </nav>
+        </header>
+
+        <section class="ps-hero" style="background-image:${heroBg}">
+          <div class="ps-hero-copy">
+            <div class="ps-kicker">${tpl ? escapeHtml(tpl.label) : "Votre site"}</div>
+            <h1>${escapeHtml(name)}</h1>
+            <p>${escapeHtml(tagline)}</p>
+            <div class="ps-hero-actions">
+              <a class="ps-btn ps-btn-whatsapp" href="${waLink}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              <a class="ps-btn ps-btn-primary" href="${callLink}">Appeler</a>
+              <a class="ps-btn ps-btn-ghost" href="#preview-contact">Voir les horaires</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="ps-section" id="preview-services">
+          <h2>Nos services & produits</h2>
+          <p class="lead">Découvrez l'offre de ${escapeHtml(name)}.</p>
+          ${servicesBlock}
+        </section>
+
+        <section class="ps-section alt" id="preview-gallery">
+          <h2>Galerie</h2>
+          <p class="lead">Ambiance, réalisations et moments forts.</p>
+          ${galleryBlock}
+        </section>
+
+        <section class="ps-section" id="preview-contact">
+          <h2>Contact & horaires</h2>
+          <p class="lead">Retrouvez-nous facilement et écrivez-nous en un clic.</p>
+          <div class="ps-contact-grid">
+            <div class="ps-info-list">
+              <div class="ps-info-item"><span>Téléphone</span>${escapeHtml(c.phone || "À compléter")}</div>
+              <div class="ps-info-item"><span>WhatsApp</span>${escapeHtml(c.whatsapp || c.phone || "À compléter")}</div>
+              <div class="ps-info-item"><span>Adresse</span>${escapeHtml(c.address || "À compléter")}</div>
+              <div class="ps-info-item"><span>Horaires</span>${escapeHtml(c.hours || "À compléter")}</div>
+            </div>
+            <div class="ps-cta-box">
+              <p>Une question ? Contactez ${escapeHtml(name)} directement depuis le site.</p>
+              <div class="ps-hero-actions">
+                <a class="ps-btn ps-btn-whatsapp" href="${waLink}" target="_blank" rel="noopener noreferrer">Écrire sur WhatsApp</a>
+                <a class="ps-btn ps-btn-primary" href="${callLink}">Appeler maintenant</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer class="ps-footer">© ${new Date().getFullYear()} ${escapeHtml(name)} · Propulsé par Derra Digital Studio</footer>
       </div>`;
   }
 
-  function renderPreview(state) {
+  function renderPreview(state, mode) {
     const html = `
       <div class="preview-banner">Aperçu de votre site - Essai gratuit</div>
       <div class="preview-frame">${previewHTML(state)}</div>`;
+
     els.previewMounts.forEach((mount) => {
+      const mountMode = mount.dataset.previewMode || "compact";
+      if (mode && mountMode !== mode && mode !== "all") return;
+      mount.classList.toggle("full-page", mountMode === "full");
+      mount.classList.toggle("compact", mountMode === "compact");
       mount.innerHTML = html;
     });
   }
@@ -239,16 +357,20 @@
       view.classList.toggle("active", view.dataset.view === step);
     });
 
+    if (els.previewCtaBar) {
+      els.previewCtaBar.classList.toggle("visible", step === "preview" && !state.locked);
+    }
+
     if (step === "template") renderTemplates(state);
     if (step === "details") {
       fillDetailsForm(state);
       renderThemes(state);
       renderServices(state);
-      renderPreview(state);
+      renderPreview(state, "compact");
     }
-    if (step === "preview") renderPreview(state);
+    if (step === "preview") renderPreview(state, "full");
     if (step === "checkout") {
-      renderPreview(state);
+      renderPreview(state, "compact");
       renderSummary(state);
     }
     if (step === "success") renderSuccess(state);
@@ -313,8 +435,24 @@
     }
   }
 
-  // Events
   document.addEventListener("click", async (event) => {
+    const stepBtn = event.target.closest("[data-step]");
+    if (stepBtn) {
+      const target = stepBtn.dataset.step;
+      const state = load();
+      if (!canJumpTo(target, state, routeFromHash())) return;
+      if (target === "preview") {
+        const error = validateDetails(state.config);
+        if (error) {
+          if (els.formError) els.formError.textContent = error;
+          navigate("details");
+          return;
+        }
+      }
+      navigate(target);
+      return;
+    }
+
     const target = event.target.closest("[data-action], [data-template], [data-theme], [data-remove], [data-pay]");
     if (!target) return;
 
@@ -340,7 +478,7 @@
       if (!state.config.services.length) state.config.services = [emptyService()];
       save(state);
       renderServices(state);
-      renderPreview(state);
+      renderPreview(state, "compact");
       return;
     }
 
@@ -378,6 +516,7 @@
       if (payBlock) payBlock.scrollIntoView({ behavior: "smooth", block: "center" });
     }
     if (action === "back-details") navigate("details");
+    if (action === "back-preview") navigate("preview");
     if (action === "add-service") {
       const state = load();
       state.config.services.push(emptyService());
@@ -396,7 +535,7 @@
     const field = event.target.name;
     if (!field) return;
     updateConfig({ [field]: event.target.value });
-    renderPreview(load());
+    renderPreview(load(), "compact");
   });
 
   els.servicesList.addEventListener("input", (event) => {
@@ -410,7 +549,7 @@
       s.id === id ? { ...s, [field]: event.target.value } : s
     );
     save(state);
-    renderPreview(state);
+    renderPreview(state, "compact");
   });
 
   els.servicesList.addEventListener("change", async (event) => {
@@ -425,7 +564,7 @@
       );
       save(state);
       renderServices(state);
-      renderPreview(state);
+      renderPreview(state, "compact");
     } catch (err) {
       alert(err.message);
       input.value = "";
@@ -436,7 +575,7 @@
     try {
       const dataUrl = await fileToDataUrl(event.target.files?.[0]);
       updateConfig({ logo: dataUrl });
-      renderPreview(load());
+      renderPreview(load(), "compact");
     } catch (err) {
       alert(err.message);
       event.target.value = "";
@@ -447,7 +586,7 @@
     try {
       const dataUrl = await fileToDataUrl(event.target.files?.[0]);
       updateConfig({ banner: dataUrl });
-      renderPreview(load());
+      renderPreview(load(), "compact");
     } catch (err) {
       alert(err.message);
       event.target.value = "";
@@ -456,7 +595,6 @@
 
   window.addEventListener("hashchange", render);
 
-  // Boot
   const initial = load();
   if (initial.locked) {
     location.hash = "#/success";

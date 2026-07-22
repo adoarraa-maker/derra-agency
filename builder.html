@@ -108,18 +108,30 @@
           </div>
         </div>
 
-        <aside class="preview-shell" data-preview-mount aria-label="Aperçu en direct"></aside>
+        <aside class="preview-shell compact" data-preview-mount data-preview-mode="compact" aria-label="Aperçu en direct"></aside>
       </div>
     </section>
 
     <!-- STEP 3: Preview -->
-    <section class="view panel" data-view="preview">
-      <h2>3. Aperçu gratuit en temps réel</h2>
-      <p class="hint" style="margin:10px 0 18px">Votre brouillon est gratuit. La publication en ligne démarre après paiement.</p>
-      <div class="preview-shell" data-preview-mount style="position:relative;top:0;margin-bottom:8px"></div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" type="button" data-action="back-details">← Modifier les infos</button>
-        <button class="btn btn-gold" type="button" data-action="goto-checkout">Publier mon site web maintenant — 99 CHF</button>
+    <section class="view" data-view="preview">
+      <div class="panel" style="margin-bottom:16px">
+        <h2>3. Aperçu gratuit en temps réel</h2>
+        <p class="hint" style="margin:10px 0 0">Voici exactement à quoi ressemblera votre site publié. Naviguez dans l'aperçu, puis publiez quand vous êtes prêt.</p>
+      </div>
+
+      <div class="preview-shell full-page" data-preview-mount data-preview-mode="full" aria-label="Aperçu complet du site"></div>
+
+      <div class="preview-cta-bar" id="preview-cta-bar">
+        <strong>Votre site vous plaît ?</strong>
+        <div class="preview-cta-actions">
+          <button class="btn btn-secondary" type="button" data-action="back-details">Retour pour modifier</button>
+          <button class="btn btn-gold" type="button" data-action="goto-checkout">Publier mon site maintenant — 99 CHF</button>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:18px">
+        <button class="btn btn-secondary" type="button" data-action="back-details">← Retour</button>
+        <button class="btn btn-primary" type="button" data-action="goto-checkout">Continuer vers le paiement →</button>
       </div>
     </section>
 
@@ -136,7 +148,7 @@
                 <strong>Stripe</strong>
                 <p>Carte bancaire sécurisée · 99 CHF</p>
               </div>
-              <button class="btn btn-gold" type="button" data-pay="stripe">Publier mon site web maintenant — 99 CHF</button>
+              <button class="btn btn-gold" type="button" data-pay="stripe">Publier mon site maintenant — 99 CHF</button>
             </div>
             <div class="pay-card">
               <div>
@@ -148,13 +160,13 @@
           </div>
 
           <div class="btn-row">
-            <button class="btn btn-secondary" type="button" data-action="goto-preview">← Revenir à l'aperçu</button>
+            <button class="btn btn-secondary" type="button" data-action="back-preview">← Retour</button>
           </div>
         </div>
 
         <div>
           <div class="summary-box" id="checkout-summary"></div>
-          <div class="preview-shell" data-preview-mount style="margin-top:16px;position:relative;top:0"></div>
+          <div class="preview-shell compact" data-preview-mount data-preview-mode="compact" style="margin-top:16px;position:relative;top:0"></div>
         </div>
       </div>
     </section>
