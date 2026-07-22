@@ -68,6 +68,7 @@
         address: "",
         hours: "",
         theme: "midnight",
+        logoUpsell: false,
         services: [emptyService(), emptyService()]
       }
     };

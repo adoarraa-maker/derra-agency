@@ -13,7 +13,19 @@
   } = window.DerraBuilder;
 
   const PUBLISH_PRICE = 99;
+  const LOGO_PRICE = 49;
   const PUBLISH_LABEL = "Publier mon site maintenant — 99 CHF";
+
+  function totalPrice(config) {
+    return PUBLISH_PRICE + (config && config.logoUpsell ? LOGO_PRICE : 0);
+  }
+
+  function publishLabel(config) {
+    const total = totalPrice(config);
+    return total === PUBLISH_PRICE
+      ? PUBLISH_LABEL
+      : "Publier mon site maintenant — " + total + " CHF";
+  }
   const EDITABLE_STEPS = ["template", "details", "preview"];
 
   const ROUTES = ["template", "details", "preview", "checkout", "success"];
@@ -167,6 +179,8 @@
       const input = els.detailsForm.elements.namedItem(key);
       if (input && "value" in input) input.value = value || "";
     });
+    const logoUpsell = els.detailsForm.elements.namedItem("logoUpsell");
+    if (logoUpsell) logoUpsell.checked = Boolean(c.logoUpsell);
   }
 
   function digitsOnly(value) {
@@ -320,6 +334,7 @@
   function renderSummary(state) {
     const c = state.config;
     const tpl = TEMPLATES[c.template];
+    const total = totalPrice(c);
     els.summary.innerHTML = `
       <h3>Récapitulatif</h3>
       <ul>
@@ -327,11 +342,21 @@
         <li>Commerce : <strong>${escapeHtml(c.businessName || "—")}</strong></li>
         <li>Thème : <strong>${(THEMES[c.theme] || THEMES.midnight).label}</strong></li>
         <li>Services : <strong>${(c.services || []).filter((s) => s.name).length}</strong></li>
+        <li>Publication (12 mois inclus) : <strong>CHF ${PUBLISH_PRICE}.–</strong></li>
+        <li>Logo pro sur-mesure : <strong>${c.logoUpsell ? "CHF " + LOGO_PRICE + ".–" : "Non"}</strong></li>
       </ul>
-      <div class="summary-price">CHF ${PUBLISH_PRICE}.–</div>
-      <p class="hint">Publication Freemium — mise en ligne après paiement confirmé.</p>
+      <label class="upsell-option" for="logoUpsellCheckout" style="margin-top:16px">
+        <input id="logoUpsellCheckout" type="checkbox" data-logo-upsell ${c.logoUpsell ? "checked" : ""}>
+        <span>
+          <strong>Besoin d'un logo pro ?</strong>
+          <span>Création sur-mesure pour + 49 CHF</span>
+          <em>+ 49 CHF</em>
+        </span>
+      </label>
+      <div class="summary-price">CHF ${total}.–</div>
+      <p class="hint">Total à régler aujourd'hui${c.logoUpsell ? " (site + logo)" : " (publication seule)"}. Renouvellement annuel : 99 CHF / an.</p>
       <div class="btn-row" style="margin-top:16px">
-        <button class="btn btn-gold" type="button" data-action="focus-payment" style="width:100%">${PUBLISH_LABEL}</button>
+        <button class="btn btn-gold" type="button" data-action="focus-payment" style="width:100%">${publishLabel(c)}</button>
       </div>`;
   }
 
@@ -361,6 +386,8 @@
       const showCta = step === "preview" && !state.locked;
       els.previewCtaBar.classList.toggle("visible", showCta);
       document.body.classList.toggle("preview-step-active", showCta);
+      const publishBtn = els.previewCtaBar.querySelector('[data-action="goto-checkout"]');
+      if (publishBtn) publishBtn.textContent = publishLabel(state.config);
     }
 
     if (step === "template") renderTemplates(state);
@@ -374,6 +401,20 @@
     if (step === "checkout") {
       renderPreview(state, "compact");
       renderSummary(state);
+      const total = totalPrice(state.config);
+      document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
+        btn.textContent = publishLabel(state.config);
+      });
+      document.querySelectorAll("[data-pay='paypal']").forEach((btn) => {
+        btn.textContent = "Payer " + total + " CHF avec PayPal";
+      });
+      document.querySelectorAll(".pay-card p").forEach((p, index) => {
+        p.textContent =
+          (index === 0 ? "Carte bancaire sécurisée" : "Compte PayPal ou carte") +
+          " · " +
+          total +
+          " CHF";
+      });
     }
     if (step === "success") renderSuccess(state);
   }
@@ -425,7 +466,7 @@
         : "Redirection PayPal en cours…";
 
     try {
-      const payment = await mockCheckout({ provider, amount: PUBLISH_PRICE });
+      const payment = await mockCheckout({ provider, amount: totalPrice(state.config) });
       els.overlayText.textContent = "Paiement confirmé. Verrouillage du brouillon…";
       publish(state, payment);
       await new Promise((r) => setTimeout(r, 500));
@@ -536,8 +577,35 @@
   els.detailsForm.addEventListener("input", (event) => {
     const field = event.target.name;
     if (!field) return;
+    if (field === "logoUpsell") {
+      updateConfig({ logoUpsell: event.target.checked });
+      return;
+    }
     updateConfig({ [field]: event.target.value });
     renderPreview(load(), "compact");
+  });
+
+  els.detailsForm.addEventListener("change", (event) => {
+    if (event.target.name === "logoUpsell") {
+      updateConfig({ logoUpsell: event.target.checked });
+    }
+  });
+
+  document.addEventListener("change", (event) => {
+    if (event.target.matches("[data-logo-upsell]")) {
+      updateConfig({ logoUpsell: event.target.checked });
+      const formCheckbox = els.detailsForm.elements.namedItem("logoUpsell");
+      if (formCheckbox) formCheckbox.checked = event.target.checked;
+      renderSummary(load());
+      const state = load();
+      document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
+        btn.textContent = publishLabel(state.config);
+      });
+      document.querySelectorAll("[data-pay='paypal']").forEach((btn) => {
+        const total = totalPrice(state.config);
+        btn.textContent = "Payer " + total + " CHF avec PayPal";
+      });
+    }
   });
 
   els.servicesList.addEventListener("input", (event) => {

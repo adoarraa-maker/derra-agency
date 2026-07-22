@@ -213,6 +213,35 @@ h1 { font-size: clamp(2rem, 4vw, 3.2rem); max-width: 760px; }
 .hint { margin: 0; color: var(--muted); font-size: .82rem; }
 .error { color: #ff9b9b; font-size: .84rem; margin: 8px 0 0; }
 
+.upsell-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid rgba(217, 184, 108, .35);
+  border-radius: 16px;
+  background: linear-gradient(120deg, rgba(217, 184, 108, .12), rgba(61, 139, 253, .08));
+  cursor: pointer;
+  text-align: left;
+}
+.upsell-option input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--gold);
+  flex: 0 0 auto;
+}
+.upsell-option strong { display: block; color: #fff; font-size: .95rem; }
+.upsell-option span { display: block; margin-top: 4px; color: var(--muted); font-size: .84rem; }
+.upsell-option em {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--gold);
+  font-style: normal;
+  font-weight: 800;
+  font-size: .9rem;
+}
+
 .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .theme-swatch {
   display: grid;
