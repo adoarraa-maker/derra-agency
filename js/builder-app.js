@@ -358,7 +358,9 @@
     });
 
     if (els.previewCtaBar) {
-      els.previewCtaBar.classList.toggle("visible", step === "preview" && !state.locked);
+      const showCta = step === "preview" && !state.locked;
+      els.previewCtaBar.classList.toggle("visible", showCta);
+      document.body.classList.toggle("preview-step-active", showCta);
     }
 
     if (step === "template") renderTemplates(state);
