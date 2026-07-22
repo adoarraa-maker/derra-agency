@@ -9,7 +9,8 @@
     publish,
     markPendingStripePayment,
     completeStripeReturn,
-    STRIPE_PAYMENT_URL,
+    getStripePaymentUrl,
+    getCheckoutAmount,
     SUCCESS_RETURN_URL,
     mockCheckout,
     fileToDataUrl,
@@ -18,17 +19,13 @@
 
   const PUBLISH_PRICE = 99;
   const LOGO_PRICE = 49;
-  const PUBLISH_LABEL = "Publier mon site maintenant — 99 CHF";
 
   function totalPrice(config) {
-    return PUBLISH_PRICE + (config && config.logoUpsell ? LOGO_PRICE : 0);
+    return getCheckoutAmount(config);
   }
 
   function publishLabel(config) {
-    const total = totalPrice(config);
-    return total === PUBLISH_PRICE
-      ? PUBLISH_LABEL
-      : "Publier mon site maintenant — " + total + " CHF";
+    return "Publier mon site maintenant — " + totalPrice(config) + " CHF";
   }
   const EDITABLE_STEPS = ["template", "details", "preview"];
 
@@ -357,10 +354,10 @@
           <em>+ 49 CHF</em>
         </span>
       </label>
-      <div class="summary-price">CHF ${PUBLISH_PRICE}.–</div>
-      <p class="hint">Paiement 100% sécurisé via Stripe. Inclus : Hébergement &amp; nom de domaine pour 12 mois.${c.logoUpsell ? " Logo pro (+49 CHF) : suivi après paiement." : ""}</p>
+      <div class="summary-price" id="checkout-total">CHF ${total}.–</div>
+      <p class="hint">Paiement 100% sécurisé via Stripe.${c.logoUpsell ? " Total site + logo : 148 CHF." : " Total publication : 99 CHF."} Inclus : hébergement &amp; nom de domaine pour 12 mois.</p>
       <div class="btn-row" style="margin-top:16px">
-        <button class="btn btn-gold" type="button" data-pay="stripe" style="width:100%">Publier mon site maintenant — 99 CHF</button>
+        <button class="btn btn-gold" type="button" data-pay="stripe" style="width:100%">${publishLabel(c)}</button>
       </div>`;
   }
 
@@ -408,9 +405,7 @@
     if (step === "checkout") {
       renderPreview(state, "compact");
       renderSummary(state);
-      document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
-        btn.textContent = "Publier mon site maintenant — 99 CHF";
-      });
+      updateCheckoutPriceUI(state.config);
     }
     if (step === "success") renderSuccess(state);
   }
@@ -446,6 +441,33 @@
     };
   }
 
+  function updateCheckoutPriceUI(config) {
+    const total = totalPrice(config);
+    const label = publishLabel(config);
+    document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
+      btn.textContent = label;
+    });
+    const stickyPublish = els.previewCtaBar?.querySelector('[data-action="goto-checkout"]');
+    if (stickyPublish) stickyPublish.textContent = label;
+    const heading = document.querySelector('[data-view="checkout"] h2');
+    if (heading) heading.textContent = "4. Publier mon site web maintenant — " + total + " CHF";
+    const reassure = document.querySelector(".checkout-reassure");
+    if (reassure) {
+      reassure.textContent =
+        "Paiement 100% sécurisé via Stripe." +
+        (config.logoUpsell
+          ? " Total : 148 CHF (site + logo)."
+          : " Total : 99 CHF (site uniquement).") +
+        " Inclus : hébergement & nom de domaine pour 12 mois.";
+    }
+    const payDesc = document.querySelector("#pay-options .pay-card p");
+    if (payDesc) {
+      payDesc.textContent = config.logoUpsell
+        ? "Carte bancaire sécurisée · 148 CHF (site + logo)"
+        : "Carte bancaire sécurisée · 99 CHF (site uniquement)";
+    }
+  }
+
   function startStripeCheckout() {
     const state = load();
     const error = validateDetails(state.config);
@@ -455,22 +477,26 @@
       return;
     }
 
-    // Persist draft + preview config before leaving for Stripe.
+    const stripeUrl = getStripePaymentUrl(state.config);
     markPendingStripePayment(state);
     save({
       ...load(),
       paymentPending: true,
       paymentProvider: "stripe",
       paymentStartedAt: new Date().toISOString(),
+      checkoutAmount: getCheckoutAmount(state.config),
+      stripePaymentUrl: stripeUrl,
       returnUrl: SUCCESS_RETURN_URL,
       step: "checkout"
     });
 
     els.overlay.classList.add("open");
-    els.overlayText.textContent = "Redirection sécurisée vers Stripe…";
+    els.overlayText.textContent = state.config.logoUpsell
+      ? "Redirection Stripe — Site + Logo (148 CHF)…"
+      : "Redirection Stripe — Site (99 CHF)…";
 
     window.setTimeout(() => {
-      window.location.href = STRIPE_PAYMENT_URL;
+      window.location.href = stripeUrl;
     }, 450);
   }
 
@@ -612,6 +638,7 @@
   els.detailsForm.addEventListener("change", (event) => {
     if (event.target.name === "logoUpsell") {
       updateConfig({ logoUpsell: event.target.checked });
+      updateCheckoutPriceUI(load().config);
     }
   });
 
@@ -620,15 +647,9 @@
       updateConfig({ logoUpsell: event.target.checked });
       const formCheckbox = els.detailsForm.elements.namedItem("logoUpsell");
       if (formCheckbox) formCheckbox.checked = event.target.checked;
-      renderSummary(load());
       const state = load();
-      document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
-        btn.textContent = publishLabel(state.config);
-      });
-      document.querySelectorAll("[data-pay='paypal']").forEach((btn) => {
-        const total = totalPrice(state.config);
-        btn.textContent = "Payer " + total + " CHF avec PayPal";
-      });
+      renderSummary(state);
+      updateCheckoutPriceUI(state.config);
     }
   });
 

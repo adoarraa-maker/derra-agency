@@ -135,9 +135,18 @@
     return save(state);
   }
 
-  const STRIPE_PAYMENT_URL = "https://buy.stripe.com/14A4gA4AFdnybkr6MzcAo02";
+  const STRIPE_PAYMENT_URL_SITE = "https://buy.stripe.com/14A4gA4AFdnybkr6MzcAo02";
+  const STRIPE_PAYMENT_URL_SITE_LOGO = "https://buy.stripe.com/cNifZid7bgzKdsz5IvcAo03";
   const SUCCESS_RETURN_URL =
     "https://adoarraa-maker.github.io/derra-agency/builder.html?paid=1#/success";
+
+  function getStripePaymentUrl(config) {
+    return config && config.logoUpsell ? STRIPE_PAYMENT_URL_SITE_LOGO : STRIPE_PAYMENT_URL_SITE;
+  }
+
+  function getCheckoutAmount(config) {
+    return config && config.logoUpsell ? 148 : 99;
+  }
 
   function markPendingStripePayment(state) {
     const pending = {
@@ -145,6 +154,8 @@
       paymentPending: true,
       paymentProvider: "stripe",
       paymentStartedAt: new Date().toISOString(),
+      checkoutAmount: getCheckoutAmount(state.config),
+      stripePaymentUrl: getStripePaymentUrl(state.config),
       step: "checkout"
     };
     save(pending);
@@ -152,14 +163,16 @@
   }
 
   function completeStripeReturn(state) {
-    return publish(state || load(), {
+    const current = state || load();
+    return publish(current, {
       provider: "stripe",
-      amount: 99 + ((state || load()).config?.logoUpsell ? 49 : 0),
+      amount: getCheckoutAmount(current.config),
       currency: "CHF",
       status: "succeeded",
       transactionId: "STRIPE-LINK-" + Date.now().toString(36).toUpperCase(),
       paidAt: new Date().toISOString(),
-      source: "stripe_payment_link"
+      source: "stripe_payment_link",
+      logoUpsell: Boolean(current.config?.logoUpsell)
     });
   }
 
@@ -206,8 +219,11 @@
     TEMPLATES,
     THEMES,
     STORAGE_KEY,
-    STRIPE_PAYMENT_URL,
+    STRIPE_PAYMENT_URL_SITE,
+    STRIPE_PAYMENT_URL_SITE_LOGO,
     SUCCESS_RETURN_URL,
+    getStripePaymentUrl,
+    getCheckoutAmount,
     emptyService,
     defaultState,
     load,
