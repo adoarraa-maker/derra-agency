@@ -45,6 +45,8 @@
     detailsForm: document.getElementById("details-form"),
     servicesList: document.getElementById("services-list"),
     themeGrid: document.getElementById("theme-grid"),
+    logoGenerator: document.getElementById("logo-generator"),
+    logoPicker: document.getElementById("logo-picker"),
     previewMounts: [...document.querySelectorAll("[data-preview-mount]")],
     previewCtaBar: document.getElementById("preview-cta-bar"),
     summary: document.getElementById("checkout-summary"),
@@ -164,6 +166,77 @@
       </div>`
       )
       .join("");
+  }
+
+  function getBrandColors(config) {
+    const theme = THEMES[config.theme] || THEMES.midnight;
+    return { primary: theme.primary, soft: theme.soft };
+  }
+
+  function buildLogoOptions(config) {
+    if (!window.DerraLogoGenerator) return [];
+    const colors = getBrandColors(config);
+    return window.DerraLogoGenerator.generateLogoSet(
+      config.businessName || "Mon Commerce",
+      colors.primary,
+      colors.soft
+    );
+  }
+
+  function renderLogoPicker(state) {
+    if (!els.logoGenerator || !els.logoPicker) return;
+    const enabled = Boolean(state.config.logoUpsell);
+    els.logoGenerator.hidden = !enabled;
+    if (!enabled) return;
+
+    const options = buildLogoOptions(state.config);
+    els.logoPicker.innerHTML = options
+      .map((option) => {
+        const selected = state.config.logoStyle === option.id ? "selected" : "";
+        return `
+          <button type="button" class="logo-option ${selected}" data-logo-style="${option.id}" role="option" aria-selected="${selected ? "true" : "false"}">
+            <img src="${option.dataUrl}" alt="Logo ${option.label}">
+            <span>${option.label}</span>
+          </button>`;
+      })
+      .join("");
+  }
+
+  async function applyGeneratedLogo(styleId) {
+    const state = load();
+    const options = buildLogoOptions(state.config);
+    const selected = options.find((option) => option.id === styleId) || options[0];
+    if (!selected) return;
+
+    let png = "";
+    try {
+      png = await window.DerraLogoGenerator.svgDataUrlToPngDataUrl(selected.dataUrl, 512);
+    } catch {
+      png = selected.dataUrl;
+    }
+
+    updateConfig({
+      logoUpsell: true,
+      logoStyle: selected.id,
+      logo: selected.dataUrl,
+      generatedLogoSvg: selected.svg,
+      generatedLogoPng: png
+    });
+    renderLogoPicker(load());
+    renderPreview(load(), "compact");
+  }
+
+  async function ensureGeneratedLogo(state) {
+    if (!state.config.logoUpsell) return state;
+    if (state.config.logoStyle && state.config.generatedLogoSvg && state.config.logo) {
+      return state;
+    }
+    const options = buildLogoOptions(state.config);
+    const preferred =
+      options.find((option) => option.id === state.config.logoStyle) || options[0];
+    if (!preferred) return state;
+    await applyGeneratedLogo(preferred.id);
+    return load();
   }
 
   function fillDetailsForm(state) {
@@ -344,16 +417,21 @@
         <li>Thème : <strong>${(THEMES[c.theme] || THEMES.midnight).label}</strong></li>
         <li>Services : <strong>${(c.services || []).filter((s) => s.name).length}</strong></li>
         <li>Publication (12 mois inclus) : <strong>CHF ${PUBLISH_PRICE}.–</strong></li>
-        <li>Logo pro sur-mesure : <strong>${c.logoUpsell ? "CHF " + LOGO_PRICE + ".–" : "Non"}</strong></li>
+        <li>Logo pro sur-mesure : <strong>${c.logoUpsell ? "CHF " + LOGO_PRICE + ".– (" + (c.logoStyle || "auto") + ")" : "Non"}</strong></li>
       </ul>
       <label class="upsell-option" for="logoUpsellCheckout" style="margin-top:16px">
         <input id="logoUpsellCheckout" type="checkbox" data-logo-upsell ${c.logoUpsell ? "checked" : ""}>
         <span>
           <strong>Besoin d'un logo pro ?</strong>
-          <span>Création sur-mesure pour + 49 CHF</span>
+          <span>Création automatique SVG/PNG pour + 49 CHF</span>
           <em>+ 49 CHF</em>
         </span>
       </label>
+      ${
+        c.logoUpsell && c.logo
+          ? `<div style="margin-top:14px"><img src="${c.logo}" alt="Logo sélectionné" style="width:100%;max-width:280px;border-radius:12px;background:#0a1524"></div>`
+          : ""
+      }
       <div class="summary-price" id="checkout-total">CHF ${total}.–</div>
       <p class="hint">Paiement 100% sécurisé via Stripe.${c.logoUpsell ? " Total site + logo : 148 CHF." : " Total publication : 99 CHF."} Inclus : hébergement &amp; nom de domaine pour 12 mois.</p>
       <div class="btn-row" style="margin-top:16px">
@@ -399,7 +477,11 @@
       fillDetailsForm(state);
       renderThemes(state);
       renderServices(state);
+      renderLogoPicker(state);
       renderPreview(state, "compact");
+      if (state.config.logoUpsell && !state.config.logoStyle) {
+        ensureGeneratedLogo(state);
+      }
     }
     if (step === "preview") renderPreview(state, "full");
     if (step === "checkout") {
@@ -477,27 +559,29 @@
       return;
     }
 
-    const stripeUrl = getStripePaymentUrl(state.config);
-    markPendingStripePayment(state);
-    save({
-      ...load(),
-      paymentPending: true,
-      paymentProvider: "stripe",
-      paymentStartedAt: new Date().toISOString(),
-      checkoutAmount: getCheckoutAmount(state.config),
-      stripePaymentUrl: stripeUrl,
-      returnUrl: SUCCESS_RETURN_URL,
-      step: "checkout"
+    Promise.resolve(state.config.logoUpsell ? ensureGeneratedLogo(state) : state).then((ready) => {
+      const stripeUrl = getStripePaymentUrl(ready.config);
+      markPendingStripePayment(ready);
+      save({
+        ...load(),
+        paymentPending: true,
+        paymentProvider: "stripe",
+        paymentStartedAt: new Date().toISOString(),
+        checkoutAmount: getCheckoutAmount(ready.config),
+        stripePaymentUrl: stripeUrl,
+        returnUrl: SUCCESS_RETURN_URL,
+        step: "checkout"
+      });
+
+      els.overlay.classList.add("open");
+      els.overlayText.textContent = ready.config.logoUpsell
+        ? "Redirection Stripe — Site + Logo (148 CHF)…"
+        : "Redirection Stripe — Site (99 CHF)…";
+
+      window.setTimeout(() => {
+        window.location.href = stripeUrl;
+      }, 450);
     });
-
-    els.overlay.classList.add("open");
-    els.overlayText.textContent = state.config.logoUpsell
-      ? "Redirection Stripe — Site + Logo (148 CHF)…"
-      : "Redirection Stripe — Site (99 CHF)…";
-
-    window.setTimeout(() => {
-      window.location.href = stripeUrl;
-    }, 450);
   }
 
   function confirmPaidReturn() {
@@ -544,7 +628,7 @@
       return;
     }
 
-    const target = event.target.closest("[data-action], [data-template], [data-theme], [data-remove], [data-pay]");
+    const target = event.target.closest("[data-action], [data-template], [data-theme], [data-remove], [data-pay], [data-logo-style]");
     if (!target) return;
 
     if (target.dataset.template) {
@@ -559,7 +643,18 @@
 
     if (target.dataset.theme) {
       updateConfig({ theme: target.dataset.theme });
-      render();
+      const next = load();
+      if (next.config.logoUpsell) {
+        const style = next.config.logoStyle || "monogram";
+        applyGeneratedLogo(style);
+      } else {
+        render();
+      }
+      return;
+    }
+
+    if (target.dataset.logoStyle) {
+      applyGeneratedLogo(target.dataset.logoStyle);
       return;
     }
 
@@ -592,13 +687,16 @@
     if (action === "goto-template") navigate("template");
     if (action === "goto-preview") {
       const partial = collectDetailsFromForm();
-      const state = updateConfig(partial);
+      let state = updateConfig(partial);
       const error = validateDetails(state.config);
       if (error) {
         els.formError.textContent = error;
         return;
       }
       els.formError.textContent = "";
+      if (state.config.logoUpsell) {
+        state = await ensureGeneratedLogo(state);
+      }
       navigate("preview");
     }
     if (action === "goto-checkout") navigate("checkout");
@@ -628,25 +726,57 @@
     const field = event.target.name;
     if (!field) return;
     if (field === "logoUpsell") {
-      updateConfig({ logoUpsell: event.target.checked });
       return;
     }
     updateConfig({ [field]: event.target.value });
-    renderPreview(load(), "compact");
+    const next = load();
+    if (field === "businessName" && next.config.logoUpsell) {
+      renderLogoPicker(next);
+      if (next.config.logoStyle) applyGeneratedLogo(next.config.logoStyle);
+      else renderPreview(next, "compact");
+      return;
+    }
+    renderPreview(next, "compact");
   });
 
-  els.detailsForm.addEventListener("change", (event) => {
+  els.detailsForm.addEventListener("change", async (event) => {
     if (event.target.name === "logoUpsell") {
-      updateConfig({ logoUpsell: event.target.checked });
+      const enabled = event.target.checked;
+      if (!enabled) {
+        updateConfig({
+          logoUpsell: false,
+          logoStyle: null,
+          generatedLogoSvg: "",
+          generatedLogoPng: ""
+        });
+        renderLogoPicker(load());
+        updateCheckoutPriceUI(load().config);
+        renderPreview(load(), "compact");
+        return;
+      }
+      updateConfig({ logoUpsell: true });
+      renderLogoPicker(load());
+      await applyGeneratedLogo(load().config.logoStyle || "monogram");
       updateCheckoutPriceUI(load().config);
     }
   });
 
-  document.addEventListener("change", (event) => {
+  document.addEventListener("change", async (event) => {
     if (event.target.matches("[data-logo-upsell]")) {
-      updateConfig({ logoUpsell: event.target.checked });
+      const enabled = event.target.checked;
       const formCheckbox = els.detailsForm.elements.namedItem("logoUpsell");
-      if (formCheckbox) formCheckbox.checked = event.target.checked;
+      if (formCheckbox) formCheckbox.checked = enabled;
+      if (!enabled) {
+        updateConfig({
+          logoUpsell: false,
+          logoStyle: null,
+          generatedLogoSvg: "",
+          generatedLogoPng: ""
+        });
+      } else {
+        updateConfig({ logoUpsell: true });
+        await applyGeneratedLogo(load().config.logoStyle || "monogram");
+      }
       const state = load();
       renderSummary(state);
       updateCheckoutPriceUI(state.config);

@@ -69,6 +69,9 @@
         hours: "",
         theme: "midnight",
         logoUpsell: false,
+        logoStyle: null,
+        generatedLogoSvg: "",
+        generatedLogoPng: "",
         services: [emptyService(), emptyService()]
       }
     };
