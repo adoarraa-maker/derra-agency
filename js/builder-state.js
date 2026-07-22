@@ -135,15 +135,41 @@
     return save(state);
   }
 
+  const STRIPE_PAYMENT_URL = "https://buy.stripe.com/14A4gA4AFdnybkr6MzcAo02";
+  const SUCCESS_RETURN_URL =
+    "https://adoarraa-maker.github.io/derra-agency/builder.html?paid=1#/success";
+
+  function markPendingStripePayment(state) {
+    const pending = {
+      ...state,
+      paymentPending: true,
+      paymentProvider: "stripe",
+      paymentStartedAt: new Date().toISOString(),
+      step: "checkout"
+    };
+    save(pending);
+    return pending;
+  }
+
+  function completeStripeReturn(state) {
+    return publish(state || load(), {
+      provider: "stripe",
+      amount: 99 + ((state || load()).config?.logoUpsell ? 49 : 0),
+      currency: "CHF",
+      status: "succeeded",
+      transactionId: "STRIPE-LINK-" + Date.now().toString(36).toUpperCase(),
+      paidAt: new Date().toISOString(),
+      source: "stripe_payment_link"
+    });
+  }
+
   /**
-   * Mock Stripe / PayPal checkout — resolves after a short delay.
-   * Replace with real Stripe Checkout Session / PayPal Orders API later.
+   * Mock PayPal checkout — Stripe uses the live Payment Link.
    */
   function mockCheckout({ provider, amount = 99 }) {
     return new Promise((resolve, reject) => {
-      const providers = ["stripe", "paypal"];
-      if (!providers.includes(provider)) {
-        reject(new Error("Fournisseur de paiement inconnu"));
+      if (provider !== "paypal") {
+        reject(new Error("Utilisez le paiement Stripe pour publier."));
         return;
       }
       window.setTimeout(() => {
@@ -152,7 +178,7 @@
           amount,
           currency: "CHF",
           status: "succeeded",
-          transactionId: provider.toUpperCase() + "-" + Date.now().toString(36).toUpperCase(),
+          transactionId: "PAYPAL-" + Date.now().toString(36).toUpperCase(),
           paidAt: new Date().toISOString()
         });
       }, 1600);
@@ -180,6 +206,8 @@
     TEMPLATES,
     THEMES,
     STORAGE_KEY,
+    STRIPE_PAYMENT_URL,
+    SUCCESS_RETURN_URL,
     emptyService,
     defaultState,
     load,
@@ -189,6 +217,8 @@
     reset,
     updateConfig,
     setStep,
+    markPendingStripePayment,
+    completeStripeReturn,
     mockCheckout,
     fileToDataUrl
   };

@@ -151,27 +151,22 @@
       <div class="checkout-grid">
         <div class="panel">
           <h2>4. Publier mon site web maintenant — 99 CHF</h2>
-          <p class="hint" style="margin:10px 0 18px">Choisissez Stripe ou PayPal pour confirmer la publication. Le paiement est simulé pour cette démo (intégration réelle à brancher ensuite).</p>
+          <p class="hint" style="margin:10px 0 18px">Vos informations et l'aperçu sont sauvegardés localement. Le paiement s'effectue de façon sécurisée via Stripe.</p>
 
           <div class="pay-options" id="pay-options">
-            <div class="pay-card">
+            <div class="pay-card" style="flex-direction:column;align-items:stretch;gap:14px">
               <div>
                 <strong>Stripe</strong>
-                <p>Carte bancaire sécurisée · 99 CHF</p>
+                <p>Carte bancaire sécurisée · publication Freemium</p>
               </div>
-              <button class="btn btn-gold" type="button" data-pay="stripe">Publier mon site maintenant — 99 CHF</button>
-            </div>
-            <div class="pay-card">
-              <div>
-                <strong>PayPal</strong>
-                <p>Compte PayPal ou carte · 99 CHF</p>
-              </div>
-              <button class="btn btn-primary" type="button" data-pay="paypal">Payer 99 CHF avec PayPal</button>
+              <button class="btn btn-gold" type="button" data-pay="stripe" id="stripe-checkout-btn">Publier mon site maintenant — 99 CHF</button>
+              <p class="checkout-reassure" role="note">Paiement 100% sécurisé via Stripe. Inclus : Hébergement &amp; nom de domaine pour 12 mois.</p>
             </div>
           </div>
 
           <div class="btn-row">
             <button class="btn btn-secondary" type="button" data-action="back-preview">← Retour</button>
+            <button class="btn btn-secondary" type="button" data-action="confirm-paid">J'ai déjà payé →</button>
           </div>
         </div>
 
@@ -185,17 +180,17 @@
     <!-- STEP 5: Success -->
     <section class="view" data-view="success">
       <div class="success-card">
-        <div class="badge-ok">Paiement confirmé</div>
-        <h2>Votre site est prêt à être mis en ligne</h2>
+        <div class="badge-ok">Commande confirmée</div>
+        <h2>Merci ! Votre publication est en cours</h2>
         <div id="success-meta"></div>
         <ol>
-          <li>Nous verrouillons votre configuration (brouillon payé).</li>
-          <li>Vous recevez un lien de prévisualisation de production.</li>
-          <li>Connectez votre nom de domaine (ex. moncommerce.ch) via DNS.</li>
-          <li>Validation finale et mise en ligne sous 2 à 3 jours après réception des médias.</li>
+          <li>Votre brouillon et votre aperçu sont sauvegardés et verrouillés.</li>
+          <li>Nous préparons la mise en ligne de votre site.</li>
+          <li>Connexion de votre nom de domaine sous <strong>24 à 48 h</strong> après réception de vos accès / préférences DNS.</li>
+          <li>Hébergement &amp; nom de domaine inclus pendant 12 mois (renouvellement 99 CHF / an).</li>
         </ol>
         <div class="btn-row" style="justify-content:center">
-          <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20j%27ai%20pay%C3%A9%20la%20publication%20Freemium%20et%20je%20souhaite%20connecter%20mon%20domaine." target="_blank" rel="noopener noreferrer">Parler du domaine sur WhatsApp</a>
+          <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20j%27ai%20pay%C3%A9%20la%20publication%20Freemium%20et%20je%20souhaite%20connecter%20mon%20domaine%20sous%2024-48h." target="_blank" rel="noopener noreferrer">Parler du domaine sur WhatsApp</a>
           <button class="btn btn-secondary" type="button" data-action="reset-builder">Créer un nouveau brouillon</button>
         </div>
       </div>

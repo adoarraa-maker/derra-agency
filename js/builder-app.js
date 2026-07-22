@@ -7,6 +7,10 @@
     setStep,
     updateConfig,
     publish,
+    markPendingStripePayment,
+    completeStripeReturn,
+    STRIPE_PAYMENT_URL,
+    SUCCESS_RETURN_URL,
     mockCheckout,
     fileToDataUrl,
     emptyService
@@ -353,20 +357,23 @@
           <em>+ 49 CHF</em>
         </span>
       </label>
-      <div class="summary-price">CHF ${total}.–</div>
-      <p class="hint">Total à régler aujourd'hui${c.logoUpsell ? " (site + logo)" : " (publication seule)"}. Renouvellement annuel : 99 CHF / an.</p>
+      <div class="summary-price">CHF ${PUBLISH_PRICE}.–</div>
+      <p class="hint">Paiement 100% sécurisé via Stripe. Inclus : Hébergement &amp; nom de domaine pour 12 mois.${c.logoUpsell ? " Logo pro (+49 CHF) : suivi après paiement." : ""}</p>
       <div class="btn-row" style="margin-top:16px">
-        <button class="btn btn-gold" type="button" data-action="focus-payment" style="width:100%">${publishLabel(c)}</button>
+        <button class="btn btn-gold" type="button" data-pay="stripe" style="width:100%">Publier mon site maintenant — 99 CHF</button>
       </div>`;
   }
 
   function renderSuccess(state) {
     const payment = state.payment || {};
+    const logoNote = state.config?.logoUpsell
+      ? " Option logo pro (+49 CHF) enregistrée : nous vous recontactons pour la création."
+      : "";
     els.successMeta.innerHTML = `
       <p style="color:#c9d4e1;margin:16px 0 0">
-        Paiement <strong>${escapeHtml(payment.provider || "—")}</strong> confirmé
-        (${escapeHtml(payment.transactionId || "—")}).
-        Votre brouillon est verrouillé et prêt pour la mise en production.
+        Paiement <strong>Stripe</strong> enregistré
+        ${payment.transactionId ? "(" + escapeHtml(payment.transactionId) + ")" : ""}.
+        Prochaine étape : connexion de votre domaine sous <strong>24 à 48 h</strong>.${logoNote}
       </p>`;
   }
 
@@ -401,19 +408,8 @@
     if (step === "checkout") {
       renderPreview(state, "compact");
       renderSummary(state);
-      const total = totalPrice(state.config);
       document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
-        btn.textContent = publishLabel(state.config);
-      });
-      document.querySelectorAll("[data-pay='paypal']").forEach((btn) => {
-        btn.textContent = "Payer " + total + " CHF avec PayPal";
-      });
-      document.querySelectorAll(".pay-card p").forEach((p, index) => {
-        p.textContent =
-          (index === 0 ? "Carte bancaire sécurisée" : "Compte PayPal ou carte") +
-          " · " +
-          total +
-          " CHF";
+        btn.textContent = "Publier mon site maintenant — 99 CHF";
       });
     }
     if (step === "success") renderSuccess(state);
@@ -450,7 +446,7 @@
     };
   }
 
-  async function onPay(provider) {
+  function startStripeCheckout() {
     const state = load();
     const error = validateDetails(state.config);
     if (error || !state.config.template) {
@@ -459,23 +455,49 @@
       return;
     }
 
-    els.overlay.classList.add("open");
-    els.overlayText.textContent =
-      provider === "stripe"
-        ? "Connexion sécurisée à Stripe…"
-        : "Redirection PayPal en cours…";
+    // Persist draft + preview config before leaving for Stripe.
+    markPendingStripePayment(state);
+    save({
+      ...load(),
+      paymentPending: true,
+      paymentProvider: "stripe",
+      paymentStartedAt: new Date().toISOString(),
+      returnUrl: SUCCESS_RETURN_URL,
+      step: "checkout"
+    });
 
-    try {
-      const payment = await mockCheckout({ provider, amount: totalPrice(state.config) });
-      els.overlayText.textContent = "Paiement confirmé. Verrouillage du brouillon…";
-      publish(state, payment);
-      await new Promise((r) => setTimeout(r, 500));
-      els.overlay.classList.remove("open");
-      navigate("success");
-    } catch (err) {
-      els.overlay.classList.remove("open");
-      alert(err.message || "Paiement impossible");
+    els.overlay.classList.add("open");
+    els.overlayText.textContent = "Redirection sécurisée vers Stripe…";
+
+    window.setTimeout(() => {
+      window.location.href = STRIPE_PAYMENT_URL;
+    }, 450);
+  }
+
+  function confirmPaidReturn() {
+    const state = load();
+    if (!state.config?.template || validateDetails(state.config)) {
+      alert("Aucune commande en attente trouvée. Complétez d'abord votre projet.");
+      navigate("details");
+      return;
     }
+    completeStripeReturn(state);
+    // Clean paid query param without reload loops
+    if (window.history.replaceState) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("paid");
+      url.hash = "#/success";
+      window.history.replaceState({}, "", url.toString());
+    }
+    navigate("success");
+  }
+
+  async function onPay(provider) {
+    if (provider === "stripe") {
+      startStripeCheckout();
+      return;
+    }
+    alert("Le paiement Freemium s'effectue via Stripe.");
   }
 
   document.addEventListener("click", async (event) => {
@@ -555,8 +577,10 @@
     }
     if (action === "goto-checkout") navigate("checkout");
     if (action === "focus-payment") {
-      const payBlock = document.querySelector(".pay-options");
-      if (payBlock) payBlock.scrollIntoView({ behavior: "smooth", block: "center" });
+      startStripeCheckout();
+    }
+    if (action === "confirm-paid") {
+      confirmPaidReturn();
     }
     if (action === "back-details") navigate("details");
     if (action === "back-preview") navigate("preview");
@@ -665,7 +689,22 @@
 
   window.addEventListener("hashchange", render);
 
-  const initial = load();
+  // Boot
+  const params = new URLSearchParams(window.location.search);
+  const paidReturn = params.get("paid") === "1" || params.get("checkout") === "success";
+  let initial = load();
+
+  if (paidReturn && !initial.locked) {
+    initial = completeStripeReturn(initial);
+    if (window.history.replaceState) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("paid");
+      url.searchParams.delete("checkout");
+      url.hash = "#/success";
+      window.history.replaceState({}, "", url.toString());
+    }
+  }
+
   if (initial.locked) {
     location.hash = "#/success";
   } else if (!location.hash) {
