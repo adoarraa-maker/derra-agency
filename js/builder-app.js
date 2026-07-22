@@ -12,6 +12,9 @@
     emptyService
   } = window.DerraBuilder;
 
+  const PUBLISH_PRICE = 99;
+  const PUBLISH_LABEL = "Publier mon site web maintenant — 99 CHF";
+
   const ROUTES = ["template", "details", "preview", "checkout", "success"];
   const STEP_LABELS = {
     template: "Modèle",
@@ -207,8 +210,11 @@
         <li>Thème : <strong>${(THEMES[c.theme] || THEMES.midnight).label}</strong></li>
         <li>Services : <strong>${(c.services || []).filter((s) => s.name).length}</strong></li>
       </ul>
-      <div class="summary-price">CHF 490.–</div>
-      <p class="hint">Publication Freemium — mise en ligne après paiement confirmé.</p>`;
+      <div class="summary-price">CHF ${PUBLISH_PRICE}.–</div>
+      <p class="hint">Publication Freemium — mise en ligne après paiement confirmé.</p>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn btn-gold" type="button" data-action="focus-payment" style="width:100%">${PUBLISH_LABEL}</button>
+      </div>`;
   }
 
   function renderSuccess(state) {
@@ -295,7 +301,7 @@
         : "Redirection PayPal en cours…";
 
     try {
-      const payment = await mockCheckout({ provider, amount: 490 });
+      const payment = await mockCheckout({ provider, amount: PUBLISH_PRICE });
       els.overlayText.textContent = "Paiement confirmé. Verrouillage du brouillon…";
       publish(state, payment);
       await new Promise((r) => setTimeout(r, 500));
@@ -367,6 +373,10 @@
       navigate("preview");
     }
     if (action === "goto-checkout") navigate("checkout");
+    if (action === "focus-payment") {
+      const payBlock = document.querySelector(".pay-options");
+      if (payBlock) payBlock.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
     if (action === "back-details") navigate("details");
     if (action === "add-service") {
       const state = load();

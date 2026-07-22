@@ -138,7 +138,7 @@
    * Mock Stripe / PayPal checkout — resolves after a short delay.
    * Replace with real Stripe Checkout Session / PayPal Orders API later.
    */
-  function mockCheckout({ provider, amount = 490 }) {
+  function mockCheckout({ provider, amount = 99 }) {
     return new Promise((resolve, reject) => {
       const providers = ["stripe", "paypal"];
       if (!providers.includes(provider)) {
