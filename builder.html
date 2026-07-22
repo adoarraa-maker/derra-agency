@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Créez gratuitement l'aperçu de votre site avec Derra Digital Studio, puis publiez-le après paiement.">
+  <meta name="theme-color" content="#07111f">
+  <title>Créer votre site gratuitement — Derra Digital Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/builder.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Navigation builder">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">D.</span>
+        <span>Derra Digital Studio</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#tarifs">Tarifs</a>
+        <a href="index.html#contact">Contact</a>
+        <a class="nav-cta" href="#/template">Créer gratuitement</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="builder-hero">
+      <span class="eyebrow">Freemium Website Builder</span>
+      <h1>Créer votre site gratuitement</h1>
+      <p>Choisissez un modèle, renseignez vos infos, visualisez l'aperçu en temps réel, puis publiez après paiement Stripe ou PayPal.</p>
+      <div class="steps" id="builder-steps" aria-label="Étapes du parcours"></div>
+    </section>
+
+    <!-- STEP 1: Template -->
+    <section class="view panel" data-view="template">
+      <h2>1. Choisissez votre modèle</h2>
+      <p class="hint" style="margin:10px 0 18px">Chaque template prépare une structure adaptée à votre secteur.</p>
+      <div class="template-grid" id="template-grid"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" type="button" data-action="goto-details">Continuer →</button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Details -->
+    <section class="view" data-view="details">
+      <div class="workspace">
+        <div class="panel">
+          <h2>2. Informations de votre commerce</h2>
+          <p class="hint" style="margin:10px 0 18px">Les champs alimentent l'aperçu en direct à droite.</p>
+
+          <form id="details-form" class="form-grid">
+            <div class="field">
+              <label for="businessName">Nom du commerce</label>
+              <input id="businessName" name="businessName" type="text" placeholder="Ex. : Café du Quai" required>
+            </div>
+            <div class="field">
+              <label for="tagline">Accroche / tagline</label>
+              <input id="tagline" name="tagline" type="text" placeholder="Ex. : Cuisine maison & terrasse">
+            </div>
+
+            <div class="field">
+              <label for="logo-input">Logo</label>
+              <input id="logo-input" type="file" accept="image/*">
+            </div>
+            <div class="field">
+              <label for="banner-input">Bannière</label>
+              <input id="banner-input" type="file" accept="image/*">
+            </div>
+
+            <div class="field">
+              <label for="phone">Téléphone</label>
+              <input id="phone" name="phone" type="tel" placeholder="+41 …">
+            </div>
+            <div class="field">
+              <label for="whatsapp">WhatsApp</label>
+              <input id="whatsapp" name="whatsapp" type="tel" placeholder="+41 76 …">
+            </div>
+            <div class="field full">
+              <label for="address">Adresse</label>
+              <input id="address" name="address" type="text" placeholder="Rue, NPA, ville">
+            </div>
+            <div class="field full">
+              <label for="hours">Horaires d'ouverture</label>
+              <textarea id="hours" name="hours" placeholder="Lun–Sam 9h–18h30"></textarea>
+            </div>
+
+            <div class="field full">
+              <label>Thème de couleurs</label>
+              <div class="theme-grid" id="theme-grid"></div>
+            </div>
+
+            <div class="field full">
+              <label>Services / produits (prix + images)</label>
+              <div class="services-list" id="services-list"></div>
+              <div class="btn-row" style="margin-top:12px">
+                <button class="btn btn-secondary" type="button" data-action="add-service">+ Ajouter un service</button>
+              </div>
+            </div>
+          </form>
+
+          <p class="error" id="form-error" role="alert"></p>
+          <div class="btn-row">
+            <button class="btn btn-secondary" type="button" data-action="goto-template">← Retour</button>
+            <button class="btn btn-primary" type="button" data-action="goto-preview">Voir l'aperçu →</button>
+          </div>
+        </div>
+
+        <aside class="preview-shell" data-preview-mount aria-label="Aperçu en direct"></aside>
+      </div>
+    </section>
+
+    <!-- STEP 3: Preview -->
+    <section class="view panel" data-view="preview">
+      <h2>3. Aperçu gratuit en temps réel</h2>
+      <p class="hint" style="margin:10px 0 18px">Votre brouillon est gratuit. La publication en ligne démarre après paiement.</p>
+      <div class="preview-shell" data-preview-mount style="position:relative;top:0;margin-bottom:8px"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" type="button" data-action="back-details">← Modifier les infos</button>
+        <button class="btn btn-gold" type="button" data-action="goto-checkout">Publier mon site web →</button>
+      </div>
+    </section>
+
+    <!-- STEP 4: Checkout -->
+    <section class="view" data-view="checkout">
+      <div class="checkout-grid">
+        <div class="panel">
+          <h2>4. Publier mon site web</h2>
+          <p class="hint" style="margin:10px 0 18px">Choisissez Stripe ou PayPal. Le paiement est simulé pour cette démo (intégration réelle à brancher ensuite).</p>
+
+          <div class="pay-options">
+            <div class="pay-card">
+              <div>
+                <strong>Stripe</strong>
+                <p>Carte bancaire sécurisée</p>
+              </div>
+              <button class="btn btn-primary" type="button" data-pay="stripe">Payer avec Stripe</button>
+            </div>
+            <div class="pay-card">
+              <div>
+                <strong>PayPal</strong>
+                <p>Compte PayPal ou carte</p>
+              </div>
+              <button class="btn btn-secondary" type="button" data-pay="paypal">Payer avec PayPal</button>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" type="button" data-action="goto-preview">← Revenir à l'aperçu</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="summary-box" id="checkout-summary"></div>
+          <div class="preview-shell" data-preview-mount style="margin-top:16px;position:relative;top:0"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5: Success -->
+    <section class="view" data-view="success">
+      <div class="success-card">
+        <div class="badge-ok">Paiement confirmé</div>
+        <h2>Votre site est prêt à être mis en ligne</h2>
+        <div id="success-meta"></div>
+        <ol>
+          <li>Nous verrouillons votre configuration (brouillon payé).</li>
+          <li>Vous recevez un lien de prévisualisation de production.</li>
+          <li>Connectez votre nom de domaine (ex. moncommerce.ch) via DNS.</li>
+          <li>Validation finale et mise en ligne sous 2 à 3 jours après réception des médias.</li>
+        </ol>
+        <div class="btn-row" style="justify-content:center">
+          <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20j%27ai%20pay%C3%A9%20la%20publication%20Freemium%20et%20je%20souhaite%20connecter%20mon%20domaine." target="_blank" rel="noopener noreferrer">Parler du domaine sur WhatsApp</a>
+          <button class="btn btn-secondary" type="button" data-action="reset-builder">Créer un nouveau brouillon</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="overlay" id="payment-overlay" aria-live="polite" aria-busy="true">
+    <div class="modal">
+      <div class="spinner" aria-hidden="true"></div>
+      <h3>Traitement du paiement</h3>
+      <p id="payment-overlay-text" style="color:#9aa9bc;margin:10px 0 0">Veuillez patienter…</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container footer-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">D.</span><span>Derra Digital Studio</span></a>
+      <span>Builder Freemium · aperçu gratuit · publication payante</span>
+    </div>
+  </footer>
+
+  <script src="js/builder-state.js"></script>
+  <script src="js/builder-app.js"></script>
+</body>
+</html>
