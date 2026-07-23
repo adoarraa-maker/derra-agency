@@ -250,28 +250,60 @@
     }
     .mock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 32px; }
     .mock-grid i {
+      position: relative;
       height: 78px;
+      overflow: hidden;
       border-radius: 9px;
-      background: linear-gradient(145deg, #eef2f7, #f8fafc);
       border: 1px solid rgba(15, 23, 42, .08);
+    }
+    .mock-grid i::before,
+    .mock-grid i::after {
+      position: absolute;
+      left: 10px;
+      border-radius: 999px;
+      content: "";
+    }
+    .mock-grid i::before {
+      top: 14px;
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .75);
+      box-shadow: 0 28px 0 -8px rgba(255, 255, 255, .55), 0 40px 0 -6px rgba(255, 255, 255, .4);
+    }
+    .mock-grid i::after {
+      right: 10px;
+      left: auto;
+      top: 18px;
+      width: 38%;
+      height: 7px;
+      background: rgba(255, 255, 255, .7);
+      box-shadow: 0 14px 0 rgba(255, 255, 255, .45), 0 28px 0 rgba(255, 255, 255, .3);
+    }
+    .mock-grid i:nth-child(1) {
+      background: linear-gradient(145deg, #93c5fd, #60a5fa 55%, #3b82f6);
+    }
+    .mock-grid i:nth-child(2) {
+      background: linear-gradient(145deg, #99f6e4, #5eead4 55%, #2dd4bf);
+    }
+    .mock-grid i:nth-child(3) {
+      background: linear-gradient(145deg, #ddd6fe, #c4b5fd 55%, #a78bfa);
     }
     .float-note {
       position: absolute;
       right: -34px;
       bottom: 36px;
       padding: 14px 17px;
-      border: 1px solid rgba(15, 23, 42, .12);
+      border: 1px solid rgba(37, 99, 235, .35);
       border-radius: 16px;
-      color: #0f172a;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 16px 40px rgba(15, 23, 42, .14);
+      color: #ffffff;
+      background: #2563eb;
+      box-shadow: 0 16px 40px rgba(37, 99, 235, .35);
       font-size: .82rem;
       font-weight: 600;
       transform: rotate(-2deg);
     }
-    .float-note b { display: block; color: #1d4ed8; font-size: 1.1rem; }
+    .float-note b { display: block; color: #ffffff; font-size: 1.1rem; }
 
     section { padding: 110px 0; }
     .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 46px; }
