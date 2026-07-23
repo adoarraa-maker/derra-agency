@@ -444,16 +444,16 @@
       background-repeat: no-repeat;
     }
     .pricing .section-heading h2 {
-      color: #0f172a;
-      text-shadow: 0 1px 8px rgba(255, 255, 255, .65);
+      color: #ffffff;
+      text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.75);
     }
     .pricing .section-heading > p {
-      color: #0f172a;
-      text-shadow: 0 1px 8px rgba(255, 255, 255, .65);
+      color: #ffffff;
+      text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.75);
     }
     .pricing .eyebrow {
-      color: #1d4ed8;
-      text-shadow: 0 1px 6px rgba(255, 255, 255, .55);
+      color: #ffffff;
+      text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.75);
     }
     .delivery-note {
       display: flex;
@@ -470,14 +470,18 @@
     }
     .delivery-note strong { color: var(--gold); font-weight: 800; }
     .pricing .delivery-note {
-      color: #0f172a;
+      color: #0f172a !important;
       border-color: rgba(15, 23, 42, .1);
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
     }
-    .pricing .delivery-note strong { color: #b45309; }
+    .pricing .delivery-note span,
+    .pricing .delivery-note strong {
+      color: #0f172a !important;
+    }
+    .pricing .delivery-note strong { font-weight: 800; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: stretch; gap: 20px; }
     .price-card {
       position: relative;
