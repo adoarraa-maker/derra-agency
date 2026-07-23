@@ -53,33 +53,34 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      color: #0f172a;
       font: 800 1rem "Manrope", sans-serif;
       letter-spacing: -.02em;
-      text-shadow: 0 1px 2px rgba(5, 12, 24, .7), 0 2px 10px rgba(5, 12, 24, .35);
     }
     .brand-mark {
       display: grid;
       width: 40px;
       height: 40px;
       place-items: center;
-      border: 1px solid rgba(217, 184, 108, .4);
+      border: 1px solid rgba(15, 23, 42, .18);
       border-radius: 12px;
-      color: var(--gold);
-      background: linear-gradient(145deg, rgba(217, 184, 108, .15), rgba(61, 139, 253, .08));
+      color: #0f172a;
+      background: rgba(255, 255, 255, .72);
       font: 800 1rem "Manrope", sans-serif;
     }
-    .nav-links { display: flex; align-items: center; gap: 30px; color: #fff; font-size: .91rem; }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: #0f172a; font-size: .91rem; }
     .nav-links a {
+      color: #0f172a;
+      font-weight: 600;
       transition: color .2s ease;
-      text-shadow: 0 1px 2px rgba(5, 12, 24, .7), 0 2px 10px rgba(5, 12, 24, .35);
     }
-    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover { color: #1d4ed8; }
     .nav-cta {
       padding: 10px 17px;
-      border: 1px solid rgba(255, 255, 255, .45);
+      border: 1px solid rgba(15, 23, 42, .18);
       border-radius: 999px;
-      background: rgba(7, 17, 31, .35);
-      backdrop-filter: blur(8px);
+      color: #0f172a;
+      background: rgba(255, 255, 255, .78);
     }
 
     .hero {
@@ -88,26 +89,8 @@
       min-height: 820px;
       place-items: center;
       padding: 155px 0 90px;
-      isolation: isolate;
       overflow: hidden;
-    }
-    .hero::before {
-      position: absolute;
-      inset: 0;
-      z-index: -2;
       background: url("assets/hero-office.jpg") center 35% / cover no-repeat;
-      filter: brightness(1.12) contrast(1.04) saturate(1.08);
-      content: "";
-    }
-    .hero::after {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background:
-        linear-gradient(105deg, rgba(5, 12, 24, .58) 0%, rgba(7, 17, 31, .42) 45%, rgba(7, 17, 31, .28) 100%),
-        linear-gradient(180deg, rgba(5, 12, 24, .28) 0%, transparent 32%, rgba(5, 12, 24, .22) 100%);
-      content: "";
-      pointer-events: none;
     }
     .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(330px, .75fr); align-items: center; gap: 80px; }
     .eyebrow {
@@ -120,22 +103,22 @@
       font-weight: 700;
       letter-spacing: .15em;
       text-transform: uppercase;
-      text-shadow: 0 1px 8px rgba(5, 12, 24, .35);
     }
+    .hero-copy .eyebrow { color: #0f172a; }
     .eyebrow::before { width: 28px; height: 1px; background: currentColor; content: ""; }
     h1, h2, h3 { margin: 0; font-family: "Manrope", sans-serif; line-height: 1.12; letter-spacing: -.04em; }
     h1 { max-width: 760px; font-size: clamp(3.1rem, 6vw, 5.75rem); }
-    .gradient-text { color: transparent; background: linear-gradient(105deg, #fff 15%, var(--blue-light) 60%, var(--gold)); background-clip: text; -webkit-background-clip: text; }
+    .hero-accent {
+      color: #2563eb;
+    }
     .hero-copy > p {
       max-width: 650px;
       margin: 28px 0 36px;
-      color: #e8eef6;
+      color: #0f172a;
       font-size: clamp(1.05rem, 2vw, 1.22rem);
-      text-shadow: 0 1px 12px rgba(5, 12, 24, .35);
     }
     .hero-copy h1 {
-      color: #fff;
-      text-shadow: 0 2px 18px rgba(5, 12, 24, .4);
+      color: #0f172a;
     }
     .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
     .btn {
@@ -152,15 +135,18 @@
       transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     }
     .btn:hover { transform: translateY(-2px); }
-    .btn-primary { color: #07111f; background: #fff; box-shadow: 0 12px 35px rgba(5, 12, 24, .22); }
+    .btn-primary { color: #07111f; background: #fff; box-shadow: 0 12px 35px rgba(255, 255, 255, .1); }
     .btn-primary svg { color: #1db954; }
-    .btn-secondary {
-      border: 1px solid rgba(255, 255, 255, .45);
-      color: #fff;
-      background: rgba(7, 17, 31, .35);
-      backdrop-filter: blur(10px);
+    .btn-secondary { border: 1px solid var(--line); color: #d7e0eb; background: rgba(255, 255, 255, .03); }
+    .btn-secondary:hover { border-color: rgba(255, 255, 255, .24); }
+    .hero .btn-primary { color: #fff; background: #0f172a; box-shadow: 0 12px 35px rgba(15, 23, 42, .18); }
+    .hero .btn-primary svg { color: #22c55e; }
+    .hero .btn-secondary {
+      border: 1px solid rgba(15, 23, 42, .22);
+      color: #0f172a;
+      background: rgba(255, 255, 255, .82);
     }
-    .btn-secondary:hover { border-color: rgba(255, 255, 255, .7); background: rgba(7, 17, 31, .48); }
+    .hero .btn-secondary:hover { border-color: rgba(15, 23, 42, .4); background: #fff; }
 
     .hero-card {
       position: relative;
@@ -515,6 +501,12 @@
     .form-actions .btn { min-width: 220px; }
 
     footer { padding: 25px 0 34px; color: #7f8da0; font-size: .85rem; }
+    footer .brand { color: #fff; }
+    footer .brand-mark {
+      color: var(--gold);
+      border-color: rgba(217, 184, 108, .4);
+      background: linear-gradient(145deg, rgba(217, 184, 108, .15), rgba(61, 139, 253, .08));
+    }
     .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 25px; border-top: 1px solid var(--line); }
     .footer-inner a:hover { color: #fff; }
 
@@ -524,12 +516,7 @@
     @keyframes reveal { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
 
     @media (max-width: 940px) {
-      .hero { min-height: auto; padding-top: 175px; }
-      .hero::before { background-position: center 25%; }
-      .hero::after {
-        background:
-          linear-gradient(180deg, rgba(5, 12, 24, .55) 0%, rgba(7, 17, 31, .45) 50%, rgba(7, 17, 31, .4) 100%);
-      }
+      .hero { min-height: auto; padding-top: 175px; background-position: center 25%; }
       .hero-grid { grid-template-columns: 1fr; gap: 65px; }
       .hero-copy { text-align: center; }
       .hero-copy .eyebrow { justify-content: center; }
@@ -608,7 +595,7 @@
       <div class="container hero-grid">
         <div class="hero-copy">
           <span class="eyebrow reveal">Création web sur-mesure</span>
-          <h1 class="reveal delay-1">Des sites internet <span class="gradient-text">modernes & clés en main</span> pour vos commerces</h1>
+          <h1 class="reveal delay-1">Des sites internet modernes & <span class="hero-accent">clés en main</span> pour vos commerces</h1>
           <p class="reveal delay-2">Développez votre visibilité locale avec un site rapide, élégant et optimisé pour WhatsApp et Google Maps.</p>
           <div class="actions reveal delay-2">
             <a class="btn btn-primary" href="https://wa.me/41765761672?text=Bonjour%20Derra%20Digital%20Studio%2C%20je%20souhaite%20discuter%20de%20mon%20projet%20web." target="_blank" rel="noopener noreferrer">
