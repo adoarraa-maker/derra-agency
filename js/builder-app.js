@@ -11,6 +11,7 @@
     completeStripeReturn,
     getStripePaymentUrl,
     getCheckoutAmount,
+    LOGO_OPTION_ENABLED,
     SUCCESS_RETURN_URL,
     mockCheckout,
     fileToDataUrl,
@@ -18,14 +19,13 @@
   } = window.DerraBuilder;
 
   const PUBLISH_PRICE = 99;
-  const LOGO_PRICE = 49;
 
-  function totalPrice(config) {
-    return getCheckoutAmount(config);
+  function totalPrice() {
+    return getCheckoutAmount();
   }
 
-  function publishLabel(config) {
-    return "Publier mon site maintenant — " + totalPrice(config) + " CHF";
+  function publishLabel() {
+    return "Publier mon site maintenant — " + totalPrice() + " CHF";
   }
   const EDITABLE_STEPS = ["template", "details", "preview"];
 
@@ -184,60 +184,16 @@
     );
   }
 
-  function renderLogoPicker(state) {
-    if (!els.logoGenerator || !els.logoPicker) return;
-    const enabled = Boolean(state.config.logoUpsell);
-    els.logoGenerator.hidden = !enabled;
-    if (!enabled) return;
-
-    const options = buildLogoOptions(state.config);
-    els.logoPicker.innerHTML = options
-      .map((option) => {
-        const selected = state.config.logoStyle === option.id ? "selected" : "";
-        return `
-          <button type="button" class="logo-option ${selected}" data-logo-style="${option.id}" role="option" aria-selected="${selected ? "true" : "false"}">
-            <img src="${option.dataUrl}" alt="Logo ${option.label}">
-            <span>${option.label}${option.icon ? " · " + option.icon : ""}</span>
-          </button>`;
-      })
-      .join("");
+  function renderLogoPicker() {
+    if (els.logoGenerator) els.logoGenerator.hidden = true;
   }
 
-  async function applyGeneratedLogo(styleId) {
-    const state = load();
-    const options = buildLogoOptions(state.config);
-    const selected = options.find((option) => option.id === styleId) || options[0];
-    if (!selected) return;
-
-    let png = "";
-    try {
-      png = await window.DerraLogoGenerator.svgDataUrlToPngDataUrl(selected.dataUrl, 512);
-    } catch {
-      png = selected.dataUrl;
-    }
-
-    updateConfig({
-      logoUpsell: true,
-      logoStyle: selected.id,
-      logo: selected.dataUrl,
-      generatedLogoSvg: selected.svg,
-      generatedLogoPng: png
-    });
-    renderLogoPicker(load());
-    renderPreview(load(), "compact");
+  async function applyGeneratedLogo() {
+    // Logo option temporarily disabled.
   }
 
   async function ensureGeneratedLogo(state) {
-    if (!state.config.logoUpsell) return state;
-    if (state.config.logoStyle && state.config.generatedLogoSvg && state.config.logo) {
-      return state;
-    }
-    const options = buildLogoOptions(state.config);
-    const preferred =
-      options.find((option) => option.id === state.config.logoStyle) || options[0];
-    if (!preferred) return state;
-    await applyGeneratedLogo(preferred.id);
-    return load();
+    return state;
   }
 
   function fillDetailsForm(state) {
@@ -254,8 +210,6 @@
       const input = els.detailsForm.elements.namedItem(key);
       if (input && "value" in input) input.value = value || "";
     });
-    const logoUpsell = els.detailsForm.elements.namedItem("logoUpsell");
-    if (logoUpsell) logoUpsell.checked = Boolean(c.logoUpsell);
   }
 
   function digitsOnly(value) {
@@ -409,7 +363,7 @@
   function renderSummary(state) {
     const c = state.config;
     const tpl = TEMPLATES[c.template];
-    const total = totalPrice(c);
+    const total = totalPrice();
     els.summary.innerHTML = `
       <h3>Récapitulatif</h3>
       <ul>
@@ -418,38 +372,21 @@
         <li>Thème : <strong>${(THEMES[c.theme] || THEMES.midnight).label}</strong></li>
         <li>Services : <strong>${(c.services || []).filter((s) => s.name).length}</strong></li>
         <li>Publication (12 mois inclus) : <strong>CHF ${PUBLISH_PRICE}.–</strong></li>
-        <li>Logo pro sur-mesure : <strong>${c.logoUpsell ? "CHF " + LOGO_PRICE + ".– (" + (c.logoStyle || "auto") + ")" : "Non"}</strong></li>
       </ul>
-      <label class="upsell-option" for="logoUpsellCheckout" style="margin-top:16px">
-        <input id="logoUpsellCheckout" type="checkbox" data-logo-upsell ${c.logoUpsell ? "checked" : ""}>
-        <span>
-          <strong>Besoin d'un logo pro ?</strong>
-          <span>Création automatique SVG/PNG pour + 49 CHF</span>
-          <em>+ 49 CHF</em>
-        </span>
-      </label>
-      ${
-        c.logoUpsell && c.logo
-          ? `<div style="margin-top:14px"><img src="${c.logo}" alt="Logo sélectionné" style="width:100%;max-width:280px;border-radius:12px;background:#0a1524"></div>`
-          : ""
-      }
       <div class="summary-price" id="checkout-total">CHF ${total}.–</div>
-      <p class="hint">Paiement 100% sécurisé via Stripe.${c.logoUpsell ? " Total site + logo : 148 CHF." : " Total publication : 99 CHF."} Inclus : hébergement &amp; nom de domaine pour 12 mois.</p>
+      <p class="hint">Paiement 100% sécurisé via Stripe. Total publication : 99 CHF. Inclus : hébergement &amp; nom de domaine pour 12 mois.</p>
       <div class="btn-row" style="margin-top:16px">
-        <button class="btn btn-gold" type="button" data-pay="stripe" style="width:100%">${publishLabel(c)}</button>
+        <button class="btn btn-gold" type="button" data-pay="stripe" style="width:100%">${publishLabel()}</button>
       </div>`;
   }
 
   function renderSuccess(state) {
     const payment = state.payment || {};
-    const logoNote = state.config?.logoUpsell
-      ? " Option logo pro (+49 CHF) enregistrée : nous vous recontactons pour la création."
-      : "";
     els.successMeta.innerHTML = `
       <p style="color:#c9d4e1;margin:16px 0 0">
         Paiement <strong>Stripe</strong> enregistré
         ${payment.transactionId ? "(" + escapeHtml(payment.transactionId) + ")" : ""}.
-        Prochaine étape : connexion de votre domaine sous <strong>24 à 48 h</strong>.${logoNote}
+        Prochaine étape : connexion de votre domaine sous <strong>24 à 48 h</strong>.
       </p>`;
   }
 
@@ -470,7 +407,7 @@
       els.previewCtaBar.classList.toggle("visible", showCta);
       document.body.classList.toggle("preview-step-active", showCta);
       const publishBtn = els.previewCtaBar.querySelector('[data-action="goto-checkout"]');
-      if (publishBtn) publishBtn.textContent = publishLabel(state.config);
+      if (publishBtn) publishBtn.textContent = publishLabel();
     }
 
     if (step === "template") renderTemplates(state);
@@ -478,17 +415,14 @@
       fillDetailsForm(state);
       renderThemes(state);
       renderServices(state);
-      renderLogoPicker(state);
+      renderLogoPicker();
       renderPreview(state, "compact");
-      if (state.config.logoUpsell && !state.config.logoStyle) {
-        ensureGeneratedLogo(state);
-      }
     }
     if (step === "preview") renderPreview(state, "full");
     if (step === "checkout") {
       renderPreview(state, "compact");
       renderSummary(state);
-      updateCheckoutPriceUI(state.config);
+      updateCheckoutPriceUI();
     }
     if (step === "success") renderSuccess(state);
   }
@@ -524,9 +458,9 @@
     };
   }
 
-  function updateCheckoutPriceUI(config) {
-    const total = totalPrice(config);
-    const label = publishLabel(config);
+  function updateCheckoutPriceUI() {
+    const total = totalPrice();
+    const label = publishLabel();
     document.querySelectorAll("[data-pay='stripe']").forEach((btn) => {
       btn.textContent = label;
     });
@@ -537,17 +471,11 @@
     const reassure = document.querySelector(".checkout-reassure");
     if (reassure) {
       reassure.textContent =
-        "Paiement 100% sécurisé via Stripe." +
-        (config.logoUpsell
-          ? " Total : 148 CHF (site + logo)."
-          : " Total : 99 CHF (site uniquement).") +
-        " Inclus : hébergement & nom de domaine pour 12 mois.";
+        "Paiement 100% sécurisé via Stripe. Total : 99 CHF (site uniquement). Inclus : hébergement & nom de domaine pour 12 mois.";
     }
     const payDesc = document.querySelector("#pay-options .pay-card p");
     if (payDesc) {
-      payDesc.textContent = config.logoUpsell
-        ? "Carte bancaire sécurisée · 148 CHF (site + logo)"
-        : "Carte bancaire sécurisée · 99 CHF (site uniquement)";
+      payDesc.textContent = "Carte bancaire sécurisée · 99 CHF (site uniquement)";
     }
   }
 
@@ -560,29 +488,28 @@
       return;
     }
 
-    Promise.resolve(state.config.logoUpsell ? ensureGeneratedLogo(state) : state).then((ready) => {
-      const stripeUrl = getStripePaymentUrl(ready.config);
-      markPendingStripePayment(ready);
-      save({
-        ...load(),
-        paymentPending: true,
-        paymentProvider: "stripe",
-        paymentStartedAt: new Date().toISOString(),
-        checkoutAmount: getCheckoutAmount(ready.config),
-        stripePaymentUrl: stripeUrl,
-        returnUrl: SUCCESS_RETURN_URL,
-        step: "checkout"
-      });
-
-      els.overlay.classList.add("open");
-      els.overlayText.textContent = ready.config.logoUpsell
-        ? "Redirection Stripe — Site + Logo (148 CHF)…"
-        : "Redirection Stripe — Site (99 CHF)…";
-
-      window.setTimeout(() => {
-        window.location.href = stripeUrl;
-      }, 450);
+    // Force logo upsell off while the feature is paused.
+    updateConfig({ logoUpsell: false });
+    const ready = load();
+    const stripeUrl = getStripePaymentUrl();
+    markPendingStripePayment(ready);
+    save({
+      ...load(),
+      paymentPending: true,
+      paymentProvider: "stripe",
+      paymentStartedAt: new Date().toISOString(),
+      checkoutAmount: getCheckoutAmount(),
+      stripePaymentUrl: stripeUrl,
+      returnUrl: SUCCESS_RETURN_URL,
+      step: "checkout"
     });
+
+    els.overlay.classList.add("open");
+    els.overlayText.textContent = "Redirection Stripe — Site (99 CHF)…";
+
+    window.setTimeout(() => {
+      window.location.href = stripeUrl;
+    }, 450);
   }
 
   function confirmPaidReturn() {
@@ -639,26 +566,16 @@
       if (!state.config.tagline) state.config.tagline = tpl.defaultTagline;
       save(state);
       renderTemplates(state);
-      if (state.config.logoUpsell) {
-        applyGeneratedLogo(state.config.logoStyle || "clean-tech");
-      }
       return;
     }
 
     if (target.dataset.theme) {
       updateConfig({ theme: target.dataset.theme });
-      const next = load();
-      if (next.config.logoUpsell) {
-        const style = next.config.logoStyle || "clean-tech";
-        applyGeneratedLogo(style);
-      } else {
-        render();
-      }
+      render();
       return;
     }
 
     if (target.dataset.logoStyle) {
-      applyGeneratedLogo(target.dataset.logoStyle);
       return;
     }
 
@@ -691,16 +608,13 @@
     if (action === "goto-template") navigate("template");
     if (action === "goto-preview") {
       const partial = collectDetailsFromForm();
-      let state = updateConfig(partial);
+      const state = updateConfig(partial);
       const error = validateDetails(state.config);
       if (error) {
         els.formError.textContent = error;
         return;
       }
       els.formError.textContent = "";
-      if (state.config.logoUpsell) {
-        state = await ensureGeneratedLogo(state);
-      }
       navigate("preview");
     }
     if (action === "goto-checkout") navigate("checkout");
@@ -728,62 +642,18 @@
 
   els.detailsForm.addEventListener("input", (event) => {
     const field = event.target.name;
-    if (!field) return;
-    if (field === "logoUpsell") {
-      return;
-    }
+    if (!field || field === "logoUpsell") return;
     updateConfig({ [field]: event.target.value });
-    const next = load();
-    if (field === "businessName" && next.config.logoUpsell) {
-      renderLogoPicker(next);
-      if (next.config.logoStyle) applyGeneratedLogo(next.config.logoStyle);
-      else renderPreview(next, "compact");
-      return;
-    }
-    renderPreview(next, "compact");
+    renderPreview(load(), "compact");
   });
 
-  els.detailsForm.addEventListener("change", async (event) => {
-    if (event.target.name === "logoUpsell") {
-      const enabled = event.target.checked;
-      if (!enabled) {
-        updateConfig({
-          logoUpsell: false,
-          logoStyle: null,
-          generatedLogoSvg: "",
-          generatedLogoPng: ""
-        });
-        renderLogoPicker(load());
-        updateCheckoutPriceUI(load().config);
-        renderPreview(load(), "compact");
-        return;
-      }
-      updateConfig({ logoUpsell: true });
-      renderLogoPicker(load());
-      await applyGeneratedLogo(load().config.logoStyle || "clean-tech");
-      updateCheckoutPriceUI(load().config);
-    }
-  });
+  els.detailsForm.addEventListener("change", () => {});
 
-  document.addEventListener("change", async (event) => {
+  document.addEventListener("change", (event) => {
     if (event.target.matches("[data-logo-upsell]")) {
-      const enabled = event.target.checked;
-      const formCheckbox = els.detailsForm.elements.namedItem("logoUpsell");
-      if (formCheckbox) formCheckbox.checked = enabled;
-      if (!enabled) {
-        updateConfig({
-          logoUpsell: false,
-          logoStyle: null,
-          generatedLogoSvg: "",
-          generatedLogoPng: ""
-        });
-      } else {
-        updateConfig({ logoUpsell: true });
-        await applyGeneratedLogo(load().config.logoStyle || "clean-tech");
-      }
-      const state = load();
-      renderSummary(state);
-      updateCheckoutPriceUI(state.config);
+      event.target.checked = false;
+      updateConfig({ logoUpsell: false });
+      updateCheckoutPriceUI();
     }
   });
 
@@ -848,6 +718,15 @@
   const params = new URLSearchParams(window.location.search);
   const paidReturn = params.get("paid") === "1" || params.get("checkout") === "success";
   let initial = load();
+  // Logo option temporarily disabled — neutralize any previous draft selection.
+  if (!LOGO_OPTION_ENABLED && initial.config?.logoUpsell) {
+    initial = updateConfig({
+      logoUpsell: false,
+      logoStyle: null,
+      generatedLogoSvg: "",
+      generatedLogoPng: ""
+    });
+  }
 
   if (paidReturn && !initial.locked) {
     initial = completeStripeReturn(initial);
