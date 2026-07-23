@@ -433,7 +433,28 @@
     .offer li { display: flex; gap: 10px; color: #d6dfe9; font-size: .93rem; }
     .offer li::before { color: var(--blue-light); content: "✓"; font-weight: 700; }
 
-    .pricing { position: relative; }
+    .pricing {
+      position: relative;
+      overflow: hidden;
+      border-block: 1px solid rgba(15, 23, 42, .08);
+      background-color: #ffffff;
+      background-image: url("assets/hero-office.jpg");
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .pricing .section-heading h2 {
+      color: #0f172a;
+      text-shadow: 0 1px 8px rgba(255, 255, 255, .65);
+    }
+    .pricing .section-heading > p {
+      color: #0f172a;
+      text-shadow: 0 1px 8px rgba(255, 255, 255, .65);
+    }
+    .pricing .eyebrow {
+      color: #1d4ed8;
+      text-shadow: 0 1px 6px rgba(255, 255, 255, .55);
+    }
     .delivery-note {
       display: flex;
       align-items: flex-start;
@@ -448,6 +469,15 @@
       line-height: 1.55;
     }
     .delivery-note strong { color: var(--gold); font-weight: 800; }
+    .pricing .delivery-note {
+      color: #0f172a;
+      border-color: rgba(15, 23, 42, .1);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+    }
+    .pricing .delivery-note strong { color: #b45309; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: stretch; gap: 20px; }
     .price-card {
       position: relative;
@@ -455,17 +485,24 @@
       min-height: 470px;
       flex-direction: column;
       padding: 34px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(15, 23, 42, .1);
       border-radius: var(--radius);
-      background: linear-gradient(150deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025));
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .14);
-      transition: transform .3s ease, border-color .3s ease;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, .1);
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
     }
-    .price-card:hover { border-color: rgba(120, 180, 255, .35); transform: translateY(-6px); }
+    .price-card:hover {
+      border-color: rgba(37, 99, 235, .3);
+      box-shadow: 0 24px 50px rgba(15, 23, 42, .14);
+      transform: translateY(-6px);
+    }
     .price-card.recommended {
-      border-color: rgba(61, 139, 253, .5);
-      background: linear-gradient(155deg, rgba(61, 139, 253, .17), rgba(255, 255, 255, .035));
-      box-shadow: 0 24px 70px rgba(20, 92, 190, .16);
+      border-color: rgba(37, 99, 235, .45);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 24px 55px rgba(37, 99, 235, .18);
     }
     .recommended-badge {
       position: absolute;
@@ -473,27 +510,42 @@
       right: 20px;
       padding: 6px 11px;
       border-radius: 999px;
-      color: #06101d;
-      background: var(--blue-light);
+      color: #ffffff;
+      background: #2563eb;
       font-size: .7rem;
       font-weight: 800;
       letter-spacing: .06em;
       text-transform: uppercase;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .3);
     }
-    .price-kicker { color: var(--gold); font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-    .price-card h3 { margin-top: 13px; font-size: 1.65rem; }
+    .price-kicker { color: #b45309; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .price-card h3 { margin-top: 13px; color: #0f172a; font-size: 1.65rem; }
     .price {
       margin: 25px 0 28px;
-      color: #fff;
+      color: #0f172a;
       font: 800 clamp(2.3rem, 4vw, 3.2rem) "Manrope", sans-serif;
       letter-spacing: -.05em;
       line-height: 1;
     }
-    .price small { color: var(--muted); font-size: .82rem; font-weight: 500; letter-spacing: 0; }
+    .price small { color: #64748b; font-size: .82rem; font-weight: 500; letter-spacing: 0; }
     .price-card ul { display: grid; gap: 14px; margin: 0 0 30px; padding: 0; list-style: none; }
-    .price-card li { display: flex; gap: 10px; color: #c9d4e1; font-size: .92rem; }
-    .price-card li::before { flex: 0 0 auto; color: var(--blue-light); content: "✓"; font-weight: 800; }
+    .price-card li { display: flex; gap: 10px; color: #0f172a; font-size: .92rem; }
+    .price-card li::before { flex: 0 0 auto; color: #2563eb; content: "✓"; font-weight: 800; }
     .price-card .btn { width: 100%; margin-top: auto; }
+    .pricing .btn-secondary {
+      border: 1px solid rgba(15, 23, 42, .16);
+      color: #0f172a;
+      background: rgba(255, 255, 255, .9);
+    }
+    .pricing .btn-secondary:hover {
+      border-color: rgba(15, 23, 42, .3);
+      background: #ffffff;
+    }
+    .pricing .btn-primary {
+      color: #ffffff;
+      background: #0f172a;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .18);
+    }
 
     .quick-contact { padding-top: 0; }
     .quick-contact-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: 22px; }
