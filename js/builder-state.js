@@ -142,7 +142,7 @@
   const STRIPE_PAYMENT_URL_SITE_LOGO = "https://buy.stripe.com/cNifZid7bgzKdsz5IvcAo03";
   const LOGO_OPTION_ENABLED = false; // temporarily disabled
   const SUCCESS_RETURN_URL =
-    "https://adoarraa-maker.github.io/derra-agency/builder.html?paid=1#/success";
+    "https://adoarraa-maker.github.io/agency/builder.html?paid=1#/success";
 
   function getStripePaymentUrl() {
     // Logo upsell temporarily disabled — always use site-only Payment Link.
