@@ -717,6 +717,74 @@
     .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 25px; border-top: 1px solid var(--line); }
     .footer-inner a:hover { color: #fff; }
 
+    .sticky-cta {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: calc(100vw - 40px);
+      padding: 10px 10px 10px 16px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 999px;
+      color: #ffffff;
+      background: rgba(37, 99, 235, .92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 18px 40px rgba(37, 99, 235, .35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(18px);
+      transition: opacity .28s ease, transform .28s ease;
+    }
+    .sticky-cta.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .sticky-cta.is-hidden {
+      display: none;
+    }
+    .sticky-cta-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      font-size: .92rem;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      white-space: nowrap;
+    }
+    .sticky-cta-link span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: #ffffff;
+      font-size: .82rem;
+      font-weight: 800;
+    }
+    .sticky-cta-close {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 50%;
+      color: #ffffff;
+      background: rgba(255, 255, 255, .12);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .sticky-cta-close:hover { background: rgba(255, 255, 255, .22); }
+
     .reveal { animation: reveal .7s ease both; }
     .delay-1 { animation-delay: .12s; }
     .delay-2 { animation-delay: .24s; }
@@ -741,6 +809,21 @@
       .price-card { min-height: auto; }
       .quick-contact-grid { grid-template-columns: 1fr; }
       .contact-layout { grid-template-columns: 1fr; }
+      .sticky-cta {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        justify-content: space-between;
+        border-radius: 18px;
+        padding: 12px;
+      }
+      .sticky-cta-link {
+        flex: 1;
+        justify-content: space-between;
+        white-space: normal;
+        font-size: .84rem;
+        line-height: 1.25;
+      }
     }
 
     @media (max-width: 680px) {
@@ -1202,6 +1285,40 @@
       <span>© 2026 Derra Digital Studio. Tous droits réservés.</span>
     </div>
   </footer>
+
+  <aside class="sticky-cta" id="sticky-cta" aria-label="Créer votre site gratuitement" hidden>
+    <a class="sticky-cta-link" href="builder.html">
+      Créer votre site gratuitement
+      <span>Commencer</span>
+    </a>
+    <button class="sticky-cta-close" type="button" aria-label="Fermer" id="sticky-cta-close">×</button>
+  </aside>
+
+  <script>
+    (function () {
+      const stickyCta = document.getElementById("sticky-cta");
+      const stickyClose = document.getElementById("sticky-cta-close");
+      if (stickyCta && stickyClose) {
+        const storageKey = "derraStickyCtaDismissed";
+        if (sessionStorage.getItem(storageKey) === "1") {
+          stickyCta.classList.add("is-hidden");
+        } else {
+          stickyCta.hidden = false;
+          const toggleStickyCta = function () {
+            if (window.scrollY > 280) stickyCta.classList.add("is-visible");
+            else stickyCta.classList.remove("is-visible");
+          };
+          toggleStickyCta();
+          window.addEventListener("scroll", toggleStickyCta, { passive: true });
+          stickyClose.addEventListener("click", function () {
+            stickyCta.classList.remove("is-visible");
+            stickyCta.classList.add("is-hidden");
+            sessionStorage.setItem(storageKey, "1");
+          });
+        }
+      }
+    })();
+  </script>
 
   <script>
     (function () {
