@@ -310,19 +310,36 @@
     .section-heading h2 { max-width: 660px; font-size: clamp(2.25rem, 4vw, 3.7rem); }
     .section-heading > p { max-width: 380px; margin: 0; color: var(--muted); }
 
-    .portfolio { border-top: 1px solid var(--line); }
+    .portfolio {
+      position: relative;
+      border-top: 1px solid rgba(15, 23, 42, .08);
+      color: #0f172a;
+      background:
+        radial-gradient(circle at 12% 20%, rgba(59, 130, 246, .12), transparent 28rem),
+        radial-gradient(circle at 88% 10%, rgba(167, 139, 250, .12), transparent 24rem),
+        radial-gradient(circle at 70% 85%, rgba(45, 212, 191, .08), transparent 22rem),
+        #f8fafc;
+    }
+    .portfolio .section-heading h2 { color: #0f172a; }
+    .portfolio .section-heading > p { color: #334155; }
+    .portfolio .eyebrow { color: #2563eb; }
     .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .project-card {
       position: relative;
       overflow: hidden;
       min-height: 480px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(15, 23, 42, .1);
       border-radius: var(--radius);
-      background: var(--card);
-      transition: transform .3s ease, border-color .3s ease;
+      background: #ffffff;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, .08);
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
     }
-    .project-card:hover { border-color: rgba(120, 180, 255, .35); transform: translateY(-6px); }
-    .project-visual { position: relative; height: 225px; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .project-card:hover {
+      border-color: rgba(37, 99, 235, .28);
+      box-shadow: 0 24px 50px rgba(15, 23, 42, .12);
+      transform: translateY(-6px);
+    }
+    .project-visual { position: relative; height: 225px; overflow: hidden; border-bottom: 1px solid rgba(15, 23, 42, .08); }
     .project-visual::before, .project-visual::after { position: absolute; content: ""; }
     .beauty { background: linear-gradient(140deg, #4a3443, #171827); }
     .beauty::before { inset: 35px 55px; border: 1px solid rgba(244, 194, 194, .45); border-radius: 50% 50% 12px 12px; }
@@ -333,10 +350,24 @@
     .restaurant { background: linear-gradient(140deg, #322c25, #141923); }
     .restaurant::before { width: 160px; height: 160px; left: 50%; top: 33px; border: 2px solid rgba(217, 184, 108, .35); border-radius: 50%; transform: translateX(-50%); box-shadow: inset 0 0 0 32px rgba(217, 184, 108, .04); }
     .restaurant::after { width: 60px; height: 60px; left: 50%; top: 85px; border-radius: 50%; background: radial-gradient(circle at 40% 30%, #d9b86c, #604c2b); transform: translateX(-50%); }
-    .project-content { display: flex; min-height: 255px; flex-direction: column; padding: 28px; }
-    .category { margin-bottom: 13px; color: var(--gold); font-size: .73rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-    .project-card h3 { font-size: 1.55rem; }
-    .project-card p { margin: 13px 0 25px; color: var(--muted); }
+    .project-content { display: flex; min-height: 255px; flex-direction: column; padding: 28px; background: #ffffff; }
+    .category { margin-bottom: 13px; color: #b45309; font-size: .73rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .project-card h3 { color: #0f172a; font-size: 1.55rem; }
+    .project-card p { margin: 13px 0 25px; color: #475569; }
+    .portfolio .text-link { display: inline-flex; align-items: center; gap: 9px; margin-top: auto; color: #0f172a; font-weight: 700; }
+    .portfolio .text-link span { color: #2563eb; transition: transform .2s ease; }
+    .portfolio .text-link:hover span { transform: translateX(4px); }
+    .portfolio .badge {
+      align-self: flex-start;
+      margin-top: auto;
+      padding: 8px 13px;
+      border: 1px solid rgba(37, 99, 235, .2);
+      border-radius: 999px;
+      color: #1d4ed8;
+      background: rgba(37, 99, 235, .08);
+      font-size: .78rem;
+      font-weight: 700;
+    }
     .text-link { display: inline-flex; align-items: center; gap: 9px; margin-top: auto; color: #fff; font-weight: 700; }
     .text-link span { color: var(--blue-light); transition: transform .2s ease; }
     .text-link:hover span { transform: translateX(4px); }
