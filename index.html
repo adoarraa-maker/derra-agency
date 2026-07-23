@@ -90,7 +90,11 @@
       place-items: center;
       padding: 155px 0 90px;
       overflow: hidden;
-      background: url("assets/hero-office.jpg") center 35% / cover no-repeat;
+      background-color: #ffffff;
+      background-image: url("assets/hero-office.jpg");
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
     .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(330px, .75fr); align-items: center; gap: 80px; }
     .eyebrow {
@@ -114,7 +118,7 @@
     .hero-copy > p {
       max-width: 650px;
       margin: 28px 0 36px;
-      color: #0f172a;
+      color: #1e293b;
       font-size: clamp(1.05rem, 2vw, 1.22rem);
     }
     .hero-copy h1 {
@@ -516,7 +520,7 @@
     @keyframes reveal { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
 
     @media (max-width: 940px) {
-      .hero { min-height: auto; padding-top: 175px; background-position: center 25%; }
+      .hero { min-height: auto; padding-top: 175px; background-position: center center; }
       .hero-grid { grid-template-columns: 1fr; gap: 65px; }
       .hero-copy { text-align: center; }
       .hero-copy .eyebrow { justify-content: center; }
